@@ -2,15 +2,21 @@ package routers
 
 import (
 	"class_notice/controllers"
+	apis "class_notice/controllers/apis"
 
 	web "github.com/beego/beego/v2/server/web"
-	context "github.com/beego/beego/v2/server/web/context"
 )
 
 func init() {
 	web.Router("/", &controllers.MainController{})
 	web.Router("/admin", &controllers.AdminController{})
-	web.Get("/a", func(ctx *context.Context) {
-		ctx.Output.Body([]byte("hello world"))
-	})
+	web.Router("/login", &controllers.AdminController{}, "get:LoginPage")
+
+	web.NewNamespace("/api",
+		web.NSNamespace("/user",
+			// 控制台登陆
+			web.NSRouter("/login", &apis.UsersController{}, "get:ApiLogin"),
+		),
+	)
+
 }

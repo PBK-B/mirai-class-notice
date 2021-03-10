@@ -11,3 +11,7 @@ type AdminController struct {
 func (c *AdminController) Get() {
 	c.Ctx.WriteString("Hello World!!!")
 }
+
+func (c *AdminController) LoginPage() {
+	c.TplName = "login.tpl"
+}
