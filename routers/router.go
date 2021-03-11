@@ -12,11 +12,12 @@ func init() {
 	web.Router("/admin", &controllers.AdminController{})
 	web.Router("/login", &controllers.AdminController{}, "get:LoginPage")
 
-	web.NewNamespace("/api",
-		web.NSNamespace("/user",
-			// 控制台登陆
-			web.NSRouter("/login", &apis.UsersController{}, "get:ApiLogin"),
-		),
+	// web.Router("/api/login", &apis.UsersController{}, "get:ApiLogin")
+
+	api := web.NewNamespace("/api",
+		// 控制台登陆
+		web.NSRouter("/login", &apis.UsersController{}, "*:ApiLogin"),
 	)
+	web.AddNamespace(api)
 
 }

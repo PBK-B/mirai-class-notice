@@ -32,9 +32,9 @@ export default function AppHeader(props) {
     <Header>
       <Navbar appearance="inverse" style={{ padding: "0 15px" }}>
         <Navbar.Header justify="center">
-          <a className="navbar-brand logo">
+          <a className="navbar-brand logo" style={{ textDecoration: "none" }}>
             <h3 style={{ lineHeight: "56px", color: "#FFFB" }}>
-              网课全解后台管理
+              课程通知后台管理
             </h3>
           </a>
         </Navbar.Header>
