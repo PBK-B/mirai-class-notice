@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 
 	"class_notice/helper"
@@ -18,6 +19,13 @@ func GetSharedOrmer() orm.Ormer {
 		singleOrmInstance = orm.NewOrm()
 	})
 	return singleOrmInstance
+}
+
+func addUser(name string, password string) {
+	id, err := AddUsers(&Users{Name: name, Password: helper.StringToMd5(password)})
+	if err == nil {
+		fmt.Println("用户创建成功: " + strconv.FormatInt(id, 10))
+	}
 }
 
 func init() {
@@ -47,5 +55,7 @@ func init() {
 
 	// 第二个参数为 true 则强制重新建表
 	orm.RunSyncdb("default", false, true)
+
+	// addUser("bin", "123456") // 添加默认用户
 
 }

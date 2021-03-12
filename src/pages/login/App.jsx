@@ -35,7 +35,7 @@ export default function App() {
     }
 
     axios
-      .get("/api/login.php?u=" + user + "&p=" + passwd_md5)
+      .get("/api/login?name=" + user + "&password=" + passwd)
       .then((res) => {
         const { data } = res;
         if (data?.code != 1) {
