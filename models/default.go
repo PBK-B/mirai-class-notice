@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
 
 	"class_notice/helper"
@@ -22,9 +21,9 @@ func GetSharedOrmer() orm.Ormer {
 }
 
 func addUser(name string, password string) {
-	id, err := AddUsers(&Users{Name: name, Password: helper.StringToMd5(password)})
+	user, err := AddUsers(&Users{Name: name, Password: helper.StringToMd5(password)})
 	if err == nil {
-		fmt.Println("用户创建成功: " + strconv.FormatInt(id, 10))
+		fmt.Println("用户创建成功: " + user.Name)
 	}
 }
 

@@ -16,12 +16,13 @@ func init() {
 
 	api := web.NewNamespace("/api",
 		// 控制台登陆
-		web.NSRouter("/login", &apis.UsersController{}, "*:ApiLogin"),
+		web.NSRouter("/login", &apis.UsersController{}, "get:ApiLogin"),
 
 		// 用户相关 API
 		web.NSNamespace("/user",
 			// 获取用户信息
-			web.NSRouter("/me", &apis.UsersController{}, "*:GetMe"),
+			web.NSRouter("/me", &apis.UsersController{}, "*:ApiGetMe"),
+			web.NSRouter("/create", &apis.UsersController{}, "post:ApiCreateUser"),
 		),
 	)
 

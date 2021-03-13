@@ -20,10 +20,21 @@ func init() {
 
 // AddUsers insert a new Users into database and returns
 // last inserted Id on success.
-func AddUsers(m *Users) (id int64, err error) {
+func AddUsers(m *Users) (user Users, err error) {
 	o := orm.NewOrm()
 	m.Token = helper.RandStringBytesMaskImprSrc(30)
-	id, err = o.Insert(m)
+	if m.Status == 0 {
+		// 如果创建时未指定账号状态将默认给启用状态
+		m.Status = 1
+	}
+	id, err := o.Insert(m)
+	m.Id = int(id)
+	user = Users{
+		Id:     m.Id,
+		Name:   m.Name,
+		Token:  m.Token,
+		Status: m.Status,
+	}
 	return
 }
 
