@@ -35,7 +35,7 @@ func (c *UsersController) ApiLogin() {
 		callBackResult(c, 403, "服务器错误", nil)
 		return
 	} else {
-		if user.Status == 1 {
+		if user.Status == 0 {
 			callBackResult(c, 200, "账号被禁用", nil)
 			return
 		}
@@ -45,6 +45,7 @@ func (c *UsersController) ApiLogin() {
 			"name":  user.Name,
 			"token": user.Token,
 		}
+		c.SetSecureCookie("bin", "u_token", user.Token)
 		callBackResult(c, 200, "", c.Data["json"])
 
 		return

@@ -41,3 +41,11 @@ func LoginUser(name string, password string) (user Users, err error) {
 
 	return
 }
+
+// Token 获取用户
+func TokenGetUser(token string) (user Users, err error) {
+	o := orm.NewOrm()
+	user = Users{Token: token}
+	err = o.Read(&user, "token")
+	return
+}

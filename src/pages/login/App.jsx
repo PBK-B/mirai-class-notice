@@ -24,7 +24,7 @@ export default function App() {
   const _handleSubmit = () => {
     const user = formValue.name;
     const passwd = formValue.password;
-    const passwd_md5 = md5(formValue.password);
+    // const passwd_md5 = md5(formValue.password);
     // const passwd_md5 = "cd4e731ce352369c9a273b1a69509995";
 
     if (!user || !passwd) {
@@ -44,8 +44,7 @@ export default function App() {
             title: msg,
           });
         } else {
-          const user = data?.user;
-          _goAdminPage(user);
+          _goAdminPage(data?.data);
         }
       })
       .catch((err) => {
@@ -55,16 +54,17 @@ export default function App() {
       });
   };
 
-  const _goAdminPage = (user) => {
-    localStorage.setItem("user", JSON.stringify(user));
+  function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+  }
+
+  const _goAdminPage = (data) => {
+    // console.log("数据", data);
     window.location.href = "/admin";
   };
-
-  const user = localStorage.getItem("user") || null;
-  if (user && JSON.parse(user)?.token) {
-    _goAdminPage(JSON.parse(user));
-    return;
-  }
 
   const __tooltip = (msg) => <Tooltip>{msg}</Tooltip>;
 
