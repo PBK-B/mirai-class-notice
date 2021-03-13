@@ -68,6 +68,10 @@ func (c *UsersController) ApiGetMe() {
 
 // 创建后台管理用户接口
 func (c *UsersController) ApiCreateUser() {
+
+	// 要求登陆助理函数
+	userAssistant(c)
+
 	u_name := c.GetString("name")
 	u_password := c.GetString("password")
 
