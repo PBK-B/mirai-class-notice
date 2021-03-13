@@ -11,11 +11,44 @@ const { useState, useEffect } = React;
 export default function App() {
   // 注销登陆
   const __unLogin = () => {
-    // localStorage.removeItem("user");
+    document.cookie = "u_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     window.location.href = "/login";
   };
 
   const [activeKey, setactiveKey] = useState("1");
+  const [user, setuser] = useState({});
+
+  const apiGetMe = () => {
+    axios
+      .get("/api/user/me")
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || "登陆失效，请重新登陆！",
+            onClose: () => {
+              __unLogin();
+            },
+          });
+        } else {
+          const _user = data?.data;
+          setuser(_user);
+        }
+      })
+      .catch((err) => {
+        Notification.error({
+          title: "请重新登陆！" + err,
+          onClose: () => {
+            __unLogin();
+          },
+        });
+      });
+  };
+
+  useEffect(() => {
+    apiGetMe();
+  }, []);
 
   const handleSelect = (eventKey) => {
     // console.log(eventKey);
@@ -30,7 +63,7 @@ export default function App() {
 
   return (
     <Container style={{ height: "100%" }}>
-      <AppHeader user={{ name: "Bin" }} />
+      <AppHeader user={user} />
 
       <FlexboxGrid style={{ height: "100%" }}>
         <FlexboxGrid.Item
