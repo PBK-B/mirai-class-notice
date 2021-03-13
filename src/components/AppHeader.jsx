@@ -24,8 +24,9 @@ export default function AppHeader(props) {
 
   // 注销登陆
   const __unLogin = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/admin/login.php";
+    // localStorage.removeItem("user");
+    document.cookie = "u_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    window.location.href = "/login";
   };
 
   return (

@@ -11,7 +11,7 @@ type AdminController struct {
 }
 
 func (c *AdminController) Get() {
-	_, user, is := isLogin(c)
+	_, _, is := isLogin(c)
 
 	if !is {
 		// token 获取失败或失效，或用户被禁用将跳转登陆
@@ -19,7 +19,7 @@ func (c *AdminController) Get() {
 		c.Finish()
 	}
 
-	c.Ctx.WriteString(user.Name + "，欢迎回来！")
+	c.TplName = "admin.tpl"
 }
 
 func (c *AdminController) LoginPage() {
