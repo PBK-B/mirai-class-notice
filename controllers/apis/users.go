@@ -99,6 +99,36 @@ func (c *UsersController) ApiCreateUser() {
 	callBackResult(c, 200, "", c.Data["json"])
 }
 
+// 获取用户列表接口
+func (c *UsersController) ApiUserList() {
+	// 要求登陆助理函数
+	userAssistant(c)
+	u_count, _ := c.GetInt("count", 10)
+	u_page, _ := c.GetInt("page", 0)
+
+	users, err := models.AllUser(u_count, u_page)
+
+	if err != nil {
+		callBackResult(c, 403, "服务器错误", nil)
+		c.Finish()
+		return
+	}
+
+	var new_users []interface{}
+
+	for item := range users {
+		i_u := users[item]
+		new_u := map[string]interface{}{
+			"id":     i_u.Id,
+			"name":   i_u.Name,
+			"status": i_u.Status,
+		}
+		new_users = append(new_users, new_u)
+	}
+
+	callBackResult(c, 200, "", new_users)
+}
+
 // 在需要登陆的接口加上这个助理函数，未登陆就会返回统一的错误
 func userAssistant(c *UsersController) (token string, user models.Users, is bool) {
 	token, user, is = isLogin(c)

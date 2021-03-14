@@ -21,8 +21,9 @@ func init() {
 		// 用户相关 API
 		web.NSNamespace("/user",
 			// 获取用户信息
-			web.NSRouter("/me", &apis.UsersController{}, "*:ApiGetMe"),
+			web.NSRouter("/me", &apis.UsersController{}, "get:ApiGetMe"),
 			web.NSRouter("/create", &apis.UsersController{}, "post:ApiCreateUser"),
+			web.NSRouter("/list", &apis.UsersController{}, "get:ApiUserList"),
 		),
 	)
 

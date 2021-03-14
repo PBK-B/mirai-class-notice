@@ -5,6 +5,7 @@ import { Container, Content, Notification, FlexboxGrid } from "rsuite";
 import { AppHeader, AppFooter } from "../../components";
 import AppMenu from "./components/AppMenu";
 import Home from "./Home";
+import UserControll from "./UserControll";
 
 const { useState, useEffect } = React;
 
@@ -57,7 +58,7 @@ export default function App() {
 
   const AppContents = {
     1: <Home />,
-    2: <Home />,
+    2: <UserControll />,
     3: <Home />,
   };
 

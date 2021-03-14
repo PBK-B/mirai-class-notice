@@ -60,3 +60,10 @@ func TokenGetUser(token string) (user Users, err error) {
 	err = o.Read(&user, "token")
 	return
 }
+
+func AllUser(limit int, page int) (users []Users, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Users))
+	_, err = qs.Filter("id__isnull", false).Limit(limit, page).All(&users)
+	return
+}
