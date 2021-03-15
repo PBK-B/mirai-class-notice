@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/beego/beego/v2/client/orm"
 )
 
 type Times struct {
 	Id      int
-	Time    time.Time `orm:"type(datetime)"`
-	Remarks string    `orm:"size(128)"`
+	Group   string
+	Start   int
+	End     int
+	Remarks string `orm:"size(128)"`
 }
 
 func init() {
