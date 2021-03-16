@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -12,8 +11,8 @@ import (
 type Times struct {
 	Id      int
 	Group   string
-	Start   int
-	End     int
+	Start   string
+	End     string
 	Remarks string `orm:"size(128)"`
 }
 
@@ -23,9 +22,10 @@ func init() {
 
 // AddTimes insert a new Times into database and returns
 // last inserted Id on success.
-func AddTimes(m *Times) (id int64, err error) {
+func AddTimes(m *Times) (time *Times, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	id, err := o.Insert(m)
+	time, err = GetTimesById(int(id))
 	return
 }
 
@@ -43,7 +43,7 @@ func GetTimesById(id int) (v *Times, err error) {
 // GetAllTimes retrieves all Times matches certain condition. Returns empty list if
 // no records exist
 func GetAllTimes(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (ml []Times, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Times))
 	// query k=v
@@ -100,14 +100,14 @@ func GetAllTimes(query map[string]string, fields []string, sortby []string, orde
 			}
 		} else {
 			// trim unused fields
-			for _, v := range l {
-				m := make(map[string]interface{})
-				val := reflect.ValueOf(v)
-				for _, fname := range fields {
-					m[fname] = val.FieldByName(fname).Interface()
-				}
-				ml = append(ml, m)
-			}
+			// for _, v := range l {
+			// 	m := make(map[string]interface{})
+			// 	val := reflect.ValueOf(v)
+			// 	for _, fname := range fields {
+			// 		m[fname] = val.FieldByName(fname).Interface()
+			// 	}
+			// 	ml = append(ml, m)
+			// }
 		}
 		return ml, nil
 	}

@@ -25,6 +25,12 @@ func init() {
 			web.NSRouter("/create", &apis.UsersController{}, "post:ApiCreateUser"),
 			web.NSRouter("/list", &apis.UsersController{}, "get:ApiUserList"),
 		),
+
+		// 用户相关 API
+		web.NSNamespace("/time",
+			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
+			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
+		),
 	)
 
 	web.AddNamespace(api)

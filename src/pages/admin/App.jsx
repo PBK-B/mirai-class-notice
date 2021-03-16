@@ -6,6 +6,7 @@ import { AppHeader, AppFooter } from "../../components";
 import AppMenu from "./components/AppMenu";
 import Home from "./Home";
 import UserControll from "./UserControll";
+import TimeControll from "./TimeControll";
 
 const { useState, useEffect } = React;
 
@@ -59,7 +60,7 @@ export default function App() {
   const AppContents = {
     1: <Home />,
     2: <UserControll />,
-    3: <Home />,
+    3: <TimeControll />,
   };
 
   return (

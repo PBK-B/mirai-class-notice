@@ -20,16 +20,18 @@ import {
 const { useState } = React;
 const { Column, HeaderCell, Cell, Pagination } = Table;
 
-export default function UserControll() {
+export default function TimeControll() {
   const [{ data, loading, error }, refetch] = useAxios({
-    url: "/api/user/list",
+    url: "/api/time/list",
   });
 
   const [showCreateUser, setshowCreateUser] = useState(false);
   const [createUserLoading, setcreateUserLoading] = useState(false);
   const [createUser, setcreateUser] = useState({
-    name: "",
-    passwd: "",
+    group: "",
+    start: "",
+    end: "",
+    remark: "",
   });
 
   const onCreatUser = (value) => {
@@ -53,7 +55,7 @@ export default function UserControll() {
     params.append("password", passwd);
 
     axios
-      .post("/api/user/create", params, {})
+      .post("/api/time/create", params, {})
       .then((res) => {
         setcreateUserLoading(false);
 
@@ -103,13 +105,13 @@ export default function UserControll() {
 
   return (
     <div style={{ marginTop: 25, marginBottom: 25 }}>
-      <p>后台用户管理页面</p>
+      <p>上课时间管理页面</p>
       <br />
 
       <FlexboxGrid style={{ marginBottom: 15 }} justify="end">
         <FlexboxGrid.Item>
           <Button appearance="ghost" onClick={() => setshowCreateUser(true)}>
-            创建用户
+            添加时间
           </Button>
         </FlexboxGrid.Item>
       </FlexboxGrid>
@@ -128,18 +130,23 @@ export default function UserControll() {
           </Column>
 
           <Column width={200} fixed>
-            <HeaderCell>账号</HeaderCell>
-            <Cell dataKey="name" />
+            <HeaderCell>分类</HeaderCell>
+            <Cell dataKey="group" />
           </Column>
 
           <Column width={200}>
-            <HeaderCell>状态</HeaderCell>
-            <Cell dataKey="status" />
+            <HeaderCell>上课时间</HeaderCell>
+            <Cell dataKey="start" />
+          </Column>
+
+          <Column width={200}>
+            <HeaderCell>下课时间</HeaderCell>
+            <Cell dataKey="end" />
           </Column>
 
           <Column width={260}>
-            <HeaderCell>登陆时间</HeaderCell>
-            <Cell dataKey="time" />
+            <HeaderCell>下课时间</HeaderCell>
+            <Cell dataKey="remark" />
           </Column>
 
           <Column width={160} fixed="right">
@@ -152,8 +159,7 @@ export default function UserControll() {
                 }
                 return (
                   <span>
-                    <a onClick={handleAction}> 编辑 </a> |
-                    <a onClick={handleAction}> 禁用 </a>
+                    <a onClick={handleAction}> 编辑 </a>
                   </span>
                 );
               }}
@@ -170,18 +176,28 @@ export default function UserControll() {
         backdrop="static"
       >
         <Modal.Header>
-          <Modal.Title>创建用户</Modal.Title>
+          <Modal.Title>添加上课时间</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form fluid onChange={onCreatUser} formValue={createUser}>
             <FormGroup>
-              <ControlLabel>账号：</ControlLabel>
-              <FormControl name="name" />
+              <ControlLabel>分类：</ControlLabel>
+              <FormControl name="group" />
             </FormGroup>
 
             <FormGroup>
-              <ControlLabel>密码：</ControlLabel>
-              <FormControl name="passwd" />
+              <ControlLabel>上课时间：</ControlLabel>
+              <FormControl name="start" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>下课时间：</ControlLabel>
+              <FormControl name="end" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>备注：</ControlLabel>
+              <FormControl name="remark" />
             </FormGroup>
           </Form>
         </Modal.Body>
@@ -192,7 +208,7 @@ export default function UserControll() {
             appearance="primary"
             loading={createUserLoading}
           >
-            创建账号
+            添加时间
           </Button>
         </Modal.Footer>
       </Modal>

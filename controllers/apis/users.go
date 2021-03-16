@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"strconv"
-
 	"github.com/beego/beego/v2/client/orm"
 	beego "github.com/beego/beego/v2/server/web"
 
@@ -21,7 +19,7 @@ func (c *UsersController) ApiLogin() {
 	u_password := c.GetString("password")
 
 	if u_name == "" || u_password == "" {
-		callBackResult(c, 403, "参数异常", nil)
+		callBackResult(&c.Controller, 403, "参数异常", nil)
 		return
 	}
 
@@ -29,14 +27,14 @@ func (c *UsersController) ApiLogin() {
 	user, err := models.LoginUser(u_name, u_password)
 
 	if err == orm.ErrNoRows {
-		callBackResult(c, 200, "用户名或密码错误", nil)
+		callBackResult(&c.Controller, 200, "用户名或密码错误", nil)
 		return
 	} else if err == orm.ErrMissPK {
-		callBackResult(c, 403, "服务器错误", nil)
+		callBackResult(&c.Controller, 403, "服务器错误", nil)
 		return
 	} else {
 		if user.Status == 0 {
-			callBackResult(c, 200, "账号被禁用", nil)
+			callBackResult(&c.Controller, 200, "账号被禁用", nil)
 			return
 		}
 
@@ -46,7 +44,7 @@ func (c *UsersController) ApiLogin() {
 			"token": user.Token,
 		}
 		c.SetSecureCookie("bin", "u_token", user.Token)
-		callBackResult(c, 200, "", c.Data["json"])
+		callBackResult(&c.Controller, 200, "", c.Data["json"])
 
 		return
 	}
@@ -55,14 +53,14 @@ func (c *UsersController) ApiLogin() {
 // 获取后台用户信息接口
 func (c *UsersController) ApiGetMe() {
 
-	_, user, _ := userAssistant(c)
+	_, user, _ := userAssistant(&c.Controller)
 
 	c.Data["json"] = map[string]interface{}{
 		"id":    user.Id,
 		"name":  user.Name,
 		"token": user.Token,
 	}
-	callBackResult(c, 200, "", c.Data["json"])
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
 	c.Finish()
 }
 
@@ -70,13 +68,13 @@ func (c *UsersController) ApiGetMe() {
 func (c *UsersController) ApiCreateUser() {
 
 	// 要求登陆助理函数
-	userAssistant(c)
+	userAssistant(&c.Controller)
 
 	u_name := c.GetString("name")
 	u_password := c.GetString("password")
 
 	if u_name == "" || u_password == "" {
-		callBackResult(c, 403, "参数异常", nil)
+		callBackResult(&c.Controller, 403, "参数异常", nil)
 		c.Finish()
 		return
 	}
@@ -86,7 +84,7 @@ func (c *UsersController) ApiCreateUser() {
 	user, err := models.AddUsers(&user)
 
 	if err != nil {
-		callBackResult(c, 403, "用户创建失败"+err.Error(), nil)
+		callBackResult(&c.Controller, 403, "用户创建失败"+err.Error(), nil)
 		c.Finish()
 		return
 	}
@@ -96,20 +94,20 @@ func (c *UsersController) ApiCreateUser() {
 		"name":  user.Name,
 		"token": user.Token,
 	}
-	callBackResult(c, 200, "", c.Data["json"])
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }
 
 // 获取用户列表接口
 func (c *UsersController) ApiUserList() {
 	// 要求登陆助理函数
-	userAssistant(c)
+	userAssistant(&c.Controller)
 	u_count, _ := c.GetInt("count", 10)
 	u_page, _ := c.GetInt("page", 0)
 
 	users, err := models.AllUser(u_count, u_page)
 
 	if err != nil {
-		callBackResult(c, 403, "服务器错误", nil)
+		callBackResult(&c.Controller, 403, "服务器错误", nil)
 		c.Finish()
 		return
 	}
@@ -126,49 +124,5 @@ func (c *UsersController) ApiUserList() {
 		new_users = append(new_users, new_u)
 	}
 
-	callBackResult(c, 200, "", new_users)
-}
-
-// 在需要登陆的接口加上这个助理函数，未登陆就会返回统一的错误
-func userAssistant(c *UsersController) (token string, user models.Users, is bool) {
-	token, user, is = isLogin(c)
-	if !is {
-		callBackResult(c, 200, "用户未登陆或 token 失效！", nil)
-		c.Finish()
-	}
-	return
-}
-
-// 错误返回结果 json 数据获取函数
-func getErrorJson(code int, msg string) string {
-	return "{" + "\"code\": " + strconv.Itoa(code) + ",\"msg\": " + "\"" + msg + "\"}"
-}
-
-// 接口数据返回接口整理函数
-func callBackResult(c *UsersController, code int, msg string, data interface{}) {
-	c.Ctx.Output.Header("Content-Type", "application/json; charset=utf-8")
-	if data == nil {
-		_code_str := -1
-		c.CustomAbort(code, getErrorJson(_code_str, msg))
-	} else {
-		_code_str := 1
-		c.Data["json"] = map[string]interface{}{
-			"code": _code_str,
-			"msg":  msg,
-			"data": data,
-		}
-		c.ServeJSON()
-	}
-}
-
-// 判断是否登陆函数，该函数还可以获取登陆用户
-func isLogin(c *UsersController) (token string, user models.Users, isLogin bool) {
-	token, tokenErr := c.GetSecureCookie("bin", "u_token")
-	user, userErr := models.TokenGetUser(token)
-	// token 获取失败或失效，或用户被禁用将视为未登陆
-	if !tokenErr || userErr != nil || user.Status != 1 {
-		return token, user, false
-	} else {
-		return token, user, true
-	}
+	callBackResult(&c.Controller, 200, "", new_users)
 }
