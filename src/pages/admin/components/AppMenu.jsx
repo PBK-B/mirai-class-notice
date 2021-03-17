@@ -7,16 +7,16 @@ export default function AppMenu(props) {
       <Sidenav.Body>
         <Nav>
           <Nav.Item eventKey="1" icon={<Icon icon="dashboard" />}>
-            系统状态
+            <p className="app-menu-text">系统状态</p>
           </Nav.Item>
           <Nav.Item eventKey="2" icon={<Icon icon="peoples" />}>
-            用户管理
+            <p className="app-menu-text">用户管理</p>
           </Nav.Item>
-          <Nav.Item eventKey="3" icon={<Icon icon="gear" />}>
-            上课时间
+          <Nav.Item eventKey="3" icon={<Icon icon="realtime" />}>
+            <p className="app-menu-text">上课时间</p>
           </Nav.Item>
-          <Nav.Item eventKey="4" icon={<Icon icon="gear" />}>
-            课程管理
+          <Nav.Item eventKey="4" icon={<Icon icon="calendar" />}>
+            <p className="app-menu-text">课程管理</p>
           </Nav.Item>
         </Nav>
       </Sidenav.Body>

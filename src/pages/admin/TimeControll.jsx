@@ -38,11 +38,11 @@ export default function TimeControll() {
     setcreateUser(value);
   };
   const APICreatUser = () => {
-    const { name, passwd } = createUser;
+    const { group, start, end, remark } = createUser;
 
-    if (!name || !passwd) {
+    if (!group || !start || !end || !remark) {
       Notification.error({
-        title: "账号密码不得为空！",
+        title: "时间信息需填写完整",
       });
       return;
     }
@@ -51,8 +51,10 @@ export default function TimeControll() {
 
     const params = new URLSearchParams();
     params.append("action", "createUser");
-    params.append("name", name);
-    params.append("password", passwd);
+    params.append("group", group);
+    params.append("start", start);
+    params.append("end", end);
+    params.append("remark", remark);
 
     axios
       .post("/api/time/create", params, {})
@@ -64,24 +66,29 @@ export default function TimeControll() {
 
         if (code < 1) {
           Notification.error({
-            title: data?.msg || "创建失败，请稍后重试！",
+            title: data?.msg || "添加失败，请稍后重试！",
           });
         } else {
           const user = data?.data;
 
           Notification.success({
-            title: `创建用户 ${user.name} 成功！`,
+            title: `添加时间 ${user.remark} 成功！`,
           });
 
           // 创建用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
           setshowCreateUser(false);
-          setcreateUser({ name: "", passwd: "" });
+          setcreateUser({
+            group: "",
+            start: "",
+            end: "",
+            remark: "",
+          });
           refetch();
         }
       })
       .catch((error) => {
         Notification.error({
-          title: "创建失败，" + error || "创建失败，请稍后重试！",
+          title: "添加失败，" + error || "添加失败，请稍后重试！",
         });
         setcreateUserLoading(false);
       });
@@ -145,7 +152,7 @@ export default function TimeControll() {
           </Column>
 
           <Column width={260}>
-            <HeaderCell>下课时间</HeaderCell>
+            <HeaderCell>备注</HeaderCell>
             <Cell dataKey="remark" />
           </Column>
 

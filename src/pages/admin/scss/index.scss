@@ -8,5 +8,18 @@ body {
 
   .logo {
     text-decoration: none;
-  } 
+  }
+
+  @media screen and (max-width: 1300px) {
+    .app-content {
+      padding: 0 25px;
+    }
+    .app-menu {
+      width: 55px;
+
+      .app-menu-text {
+        line-height: 5px;
+      }
+    }
+  }
 }

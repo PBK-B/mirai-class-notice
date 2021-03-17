@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Container, Content, Notification, FlexboxGrid } from "rsuite";
+import { Container, Content, Notification, FlexboxGrid, Row } from "rsuite";
 
 import { AppHeader, AppFooter } from "../../components";
 import AppMenu from "./components/AppMenu";
@@ -75,6 +75,7 @@ export default function App() {
             paddingTop: 15,
             borderRight: "1px solid rgb(229, 229, 234)",
           }}
+          className="app-menu"
           colspan={3}
         >
           <AppMenu
@@ -90,8 +91,9 @@ export default function App() {
             style={{
               margin: "auto",
               maxWidth: "1200px",
-              minWidth: "1200px",
             }}
+
+            className="app-content"
           >
             {AppContents[activeKey]}
           </Content>
