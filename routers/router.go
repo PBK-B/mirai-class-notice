@@ -26,11 +26,17 @@ func init() {
 			web.NSRouter("/list", &apis.UsersController{}, "get:ApiUserList"),
 		),
 
-		// 用户相关 API
+		// 时间相关 API
 		web.NSNamespace("/time",
 			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
 			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
+		),
+
+		// 课表相关 API
+		web.NSNamespace("/course",
+			web.NSRouter("/create", &apis.CoursesController{}, "post:ApiCreateCourses"),
+			web.NSRouter("/list", &apis.CoursesController{}, "get:ApiCoursesList"),
 		),
 	)
 

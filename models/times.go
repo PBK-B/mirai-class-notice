@@ -25,7 +25,9 @@ func init() {
 func AddTimes(m *Times) (time *Times, err error) {
 	o := orm.NewOrm()
 	id, err := o.Insert(m)
-	time, err = GetTimesById(int(id))
+	if err == nil {
+		time, err = GetTimesById(int(id))
+	}
 	return
 }
 
@@ -152,4 +154,14 @@ func GetAllTimesGroups() (groups []*string) {
 		groups = append(groups, &l[item].Group)
 	}
 	return
+}
+
+func TimesToMap(time Times) map[string]interface{} {
+	return map[string]interface{}{
+		"id":     time.Id,
+		"group":  time.Group,
+		"start":  time.Start,
+		"end":    time.End,
+		"remark": time.Remarks,
+	}
 }

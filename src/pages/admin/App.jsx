@@ -7,6 +7,7 @@ import AppMenu from "./components/AppMenu";
 import Home from "./Home";
 import UserControll from "./UserControll";
 import TimeControll from "./TimeControll";
+import CourseControll from "./CourseControll";
 
 const { useState, useEffect } = React;
 
@@ -61,6 +62,7 @@ export default function App() {
     1: <Home />,
     2: <UserControll />,
     3: <TimeControll />,
+    4: <CourseControll />,
   };
 
   return (

@@ -1,25 +1,25 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/beego/beego/v2/client/orm"
 )
 
 type Courses struct {
-	Id           int
-	Status       int
-	Title        string `orm:"size(128)"`
-	Classroom    string `orm:"size(128)"`
-	ClassroomId  string `orm:"size(128)"`
-	Teacher      string `orm:"size(128)"`
-	Remarks      string `orm:"size(128)"`
-	WeekTime     int
-	LessonSerial int
-	Cycle        string
+	Id           int    `orm:"description(ID)"`
+	Status       int    `orm:"description(状态: 通知[1] 暂停[0])"`
+	Title        string `orm:"size(128);description(课程名称)"`
+	Classroom    string `orm:"size(128);description(上课教学楼)"`
+	ClassroomId  string `orm:"size(128);description(上课教室)"`
+	Teacher      string `orm:"size(128);description(老师名字)"`
+	Remarks      string `orm:"size(128);description(备注)"`
+	WeekTime     int    `orm:"description(星期几上课)"`
+	LessonSerial int    `orm:"description(第几节课)"`
+	Cycle        string `orm:"description(哪些周需要上课)"`
 	Times        *Times `orm:"rel(fk)"`
 }
 
@@ -29,9 +29,12 @@ func init() {
 
 // AddCourses insert a new Courses into database and returns
 // last inserted Id on success.
-func AddCourses(m *Courses) (id int64, err error) {
+func AddCourses(m *Courses) (courses *Courses, err error) {
 	o := orm.NewOrm()
-	id, err = o.Insert(m)
+	id, err := o.Insert(m)
+	if err == nil {
+		courses, err = GetCoursesById(int(id))
+	}
 	return
 }
 
@@ -49,7 +52,7 @@ func GetCoursesById(id int) (v *Courses, err error) {
 // GetAllCourses retrieves all Courses matches certain condition. Returns empty list if
 // no records exist
 func GetAllCourses(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (ml []Courses, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Courses))
 	// query k=v
@@ -106,14 +109,14 @@ func GetAllCourses(query map[string]string, fields []string, sortby []string, or
 			}
 		} else {
 			// trim unused fields
-			for _, v := range l {
-				m := make(map[string]interface{})
-				val := reflect.ValueOf(v)
-				for _, fname := range fields {
-					m[fname] = val.FieldByName(fname).Interface()
-				}
-				ml = append(ml, m)
-			}
+			// for _, v := range l {
+			// 	m := make(map[string]interface{})
+			// 	val := reflect.ValueOf(v)
+			// 	for _, fname := range fields {
+			// 		m[fname] = val.FieldByName(fname).Interface()
+			// 	}
+			// 	ml = append(ml, m)
+			// }
 		}
 		return ml, nil
 	}
@@ -148,4 +151,34 @@ func DeleteCourses(id int) (err error) {
 		}
 	}
 	return
+}
+
+// 判断课程是否已经添加过
+func CoursesRepeat(m *Courses) bool {
+	o := orm.NewOrm()
+	err := o.QueryTable(new(Courses)).Filter("Title", m.Title).Filter("Classroom", m.Classroom).Filter("ClassroomId", m.ClassroomId).Filter("Teacher", m.Teacher).Filter("WeekTime", m.WeekTime).Filter("LessonSerial", m.LessonSerial).Filter("Cycle", m.Cycle).RelatedSel().One(m)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+func CoursesToMap(course Courses) map[string]interface{} {
+	var _cycle_obj interface{}
+	json.Unmarshal([]byte(course.Cycle), &_cycle_obj)
+	cycle_obj := _cycle_obj.([]interface{})
+
+	return map[string]interface{}{
+		"id":           course.Id,
+		"title":        course.Title,
+		"status":       course.Status,
+		"classroom":    course.Classroom,
+		"classroom_id": course.ClassroomId,
+		"teacher":      course.Teacher,
+		"remark":       course.Remarks,
+		"week_time":    course.WeekTime,
+		"cycle":        cycle_obj,
+		"time":         TimesToMap(*course.Times),
+	}
 }
