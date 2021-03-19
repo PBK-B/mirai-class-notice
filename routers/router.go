@@ -30,6 +30,7 @@ func init() {
 		web.NSNamespace("/time",
 			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
+			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
 		),
 	)
 

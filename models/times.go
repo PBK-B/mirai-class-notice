@@ -143,3 +143,13 @@ func DeleteTimes(id int) (err error) {
 	}
 	return
 }
+
+func GetAllTimesGroups() (groups []*string) {
+	o := orm.NewOrm()
+	var l []Times
+	o.QueryTable(new(Times)).Filter("group__isnull", false).Distinct().All(&l, "group")
+	for item := range l {
+		groups = append(groups, &l[item].Group)
+	}
+	return
+}

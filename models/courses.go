@@ -19,7 +19,8 @@ type Courses struct {
 	Remarks      string `orm:"size(128)"`
 	WeekTime     int
 	LessonSerial int
-	Cycle        string `json:"Cycle"`
+	Cycle        string
+	Times        *Times `orm:"rel(fk)"`
 }
 
 func init() {

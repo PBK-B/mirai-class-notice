@@ -10,7 +10,7 @@ type TimesController struct {
 	beego.Controller
 }
 
-// 创建后台管理用户接口
+// 创建上课时间
 func (c *TimesController) ApiCreateTime() {
 
 	t_group := c.GetString("group")
@@ -50,6 +50,7 @@ func (c *TimesController) ApiCreateTime() {
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }
 
+// 获取全部上课时间
 func (c *TimesController) ApiTimeList() {
 
 	u_count, _ := c.GetInt("count", 10)
@@ -82,5 +83,10 @@ func (c *TimesController) ApiTimeList() {
 
 	callBackResult(&c.Controller, 200, "", new_time)
 	c.Finish()
+}
 
+func (c *TimesController) ApiTimeGroupList() {
+	groups := models.GetAllTimesGroups()
+	callBackResult(&c.Controller, 200, "", groups)
+	c.Finish()
 }

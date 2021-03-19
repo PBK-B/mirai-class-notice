@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+body #root {
+  height: 100vh;
+}
+body .logo {
+  text-decoration: none;
+}
+@media screen and (max-width: 1300px) {
+  body .app-content {
+    padding: 0 25px;
+  }
+  body .app-menu {
+    width: 55px;
+  }
+  body .app-menu .app-menu-text {
+    line-height: 5px;
+  }
+}

@@ -78,7 +78,7 @@ export default function TimeControll() {
           // 创建用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
           setshowCreateUser(false);
           setcreateUser({
-            group: "",
+            group: group,
             start: "",
             end: "",
             remark: "",
