@@ -10,6 +10,16 @@ body {
     text-decoration: none;
   }
 
+  .custom-input-number {
+    input {
+      text-align: center;
+    }
+
+    .rs-input-number-btn-group-vertical {
+      display: none;
+    }
+  }
+
   @media screen and (max-width: 1300px) {
     .app-content {
       padding: 0 25px;

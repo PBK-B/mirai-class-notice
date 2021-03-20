@@ -22,7 +22,7 @@ func (c *CoursesController) ApiCreateCourses() {
 	c_remarks := c.GetString("remarks")             // 备注
 	c_week_time, _ := c.GetInt("week_time")         // 星期几
 	c_lesson_serial, _ := c.GetInt("lesson_serial") // 第几节课
-	c_cycle := c.GetString("c_cycle")               // 哪些周需要上课
+	c_cycle := c.GetString("cycle")                 // 哪些周需要上课
 
 	is_c_cycle := json.Valid([]byte(c_cycle)) // 判断获取到的数据是否为 json
 

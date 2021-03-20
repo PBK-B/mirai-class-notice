@@ -1,4 +1,4 @@
-import ConfigsList from "./ConfigsList";
-import CreateConfig from "./CreateConfig";
+import CourseList from "./CourseList";
+import CreateCourse from "./CreateCourse";
 
-export { ConfigsList, CreateConfig };
+export { CourseList, CreateCourse };
