@@ -2,47 +2,73 @@ import React from "react";
 import useAxios from "axios-hooks";
 import axios from "axios";
 
-import { Table, Panel, Loader, FlexboxGrid, Button, Alert, Tag } from "rsuite";
+import {
+  Table,
+  Panel,
+  Loader,
+  FlexboxGrid,
+  Button,
+  Alert,
+  Tag,
+  Pagination,
+} from "rsuite";
 
 const { useState, useEffect } = React;
-const { Column, HeaderCell, Cell, Pagination } = Table;
+const { Column, HeaderCell, Cell } = Table;
 
 export default function CourseList(props) {
   const { toPage, params = {} } = props;
 
+  const [activePage, setactivePage] = useState(1);
+  const [courses, setcourses] = useState([]);
+
   const [{ data, loading, error }, refetch] = useAxios({
-    url: "/api/course/list",
+    url: "/api/course/list?count=999",
   });
 
-  let courses = [];
+  const [coursesList, setcoursesList] = useState([]);
+  useEffect(() => {
+    if (data) {
+      let { data: data_array } = data;
+      const week_int = [
+        "零",
+        "一",
+        "二",
+        "三",
+        "四",
+        "五",
+        "六",
+        "七",
+        "八",
+        "九",
+        "十",
+      ];
+      data_array = data_array.map((item, index) => {
+        return {
+          ...item,
+          time: new Date().toUTCString(),
+          time_str: item.time.start,
+          week_time: "星期" + week_int[item.week_time],
+        };
+      });
+      // setcourses(data_array);
+      setcoursesList(data_array);
+      onChangePage(data_array, 1);
+    }
+  }, [data]);
 
-  if (data) {
-    let { data: data_array } = data;
-    const week_int = [
-      "零",
-      "一",
-      "二",
-      "三",
-      "四",
-      "五",
-      "六",
-      "七",
-      "八",
-      "九",
-      "十",
-    ];
-    data_array = data_array.map((item, index) => {
-      return {
-        ...item,
-        time: new Date().toUTCString(),
-        time_str: item.time.start,
-        week_time: "星期" + week_int[item.week_time],
-      };
-    });
-    courses = data_array;
-  }
+  const lengthMenu = [{ label: <p>10</p>, value: 10 }];
+  const [displayLength, setdisplayLength] = useState(lengthMenu[0].value);
 
-  if (loading) return <Loader backdrop content="loading..." vertical />;
+  const onChangePage = (coursesList, value) => {
+    setactivePage(value);
+    const index = displayLength * (value - 1);
+    const newArray = coursesList.slice(index, index + displayLength);
+    setcourses(newArray);
+  };
+
+  if (loading || !courses)
+    return <Loader backdrop content="loading..." vertical />;
 
   return (
     <div style={{ marginTop: 25, marginBottom: 25 }}>
@@ -139,6 +165,22 @@ export default function CourseList(props) {
             </Cell>
           </Column>
         </Table>
+        <Table.Pagination
+          lengthMenu={lengthMenu}
+          displayLength={10}
+          activePage={activePage}
+          total={coursesList.length}
+          onChangeLength={(value) => {
+            // console.log("改变每页长度", value);
+            // setdisplayLength(value);
+            // const newArray = coursesList.splice(value);
+            // setcourses(newArray);
+          }}
+          onChangePage={(value) => {
+            // console.log("改变的页面", value);
+            onChangePage(coursesList, value);
+          }}
+        ></Table.Pagination>
       </Panel>
     </div>
   );
