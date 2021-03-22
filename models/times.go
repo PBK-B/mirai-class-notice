@@ -1,11 +1,14 @@
 package models
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/task"
 )
 
 type Times struct {
@@ -164,4 +167,36 @@ func TimesToMap(time Times) map[string]interface{} {
 		"end":    time.End,
 		"remark": time.Remarks,
 	}
+}
+
+func TimesRunAllTask() {
+	task.ClearTask() // 清理全部全局任务
+
+	ls, _ := GetAllTimes(nil, nil, nil, nil, 0, -1)
+	for _, time := range ls {
+		startStr := time.Start
+		s := strings.Split(startStr, ":")
+
+		if s[0] != "" && s[1] != "" {
+			// 获取到时间
+
+			h, _ := strconv.Atoi(s[0])
+			m, _ := strconv.Atoi(s[1])
+
+			if h >= 0 && h < 24 && m >= 0 && m <= 60 {
+				// 时间合法
+				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
+				tk := task.NewTask(time.Remarks, ts, func(ctx context.Context) error {
+					fmt.Println("执行了 ", time.Remarks)
+					PushTimeAllCourses(time.Id) // 通知筛选课程
+					return nil
+				})
+				task.AddTask(time.Remarks, tk) // 将任务添加到全局任务
+			}
+
+			// fmt.Println(s[0], s[1], len(s))
+		}
+	}
+
+	task.StartTask() // 启动全局任务
 }

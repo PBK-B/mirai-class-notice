@@ -1,6 +1,7 @@
 package models
 
 import (
+	"class_notice/helper"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -180,5 +181,38 @@ func CoursesToMap(course Courses) map[string]interface{} {
 		"week_time":    course.WeekTime,
 		"cycle":        cycle_obj,
 		"time":         TimesToMap(*course.Times),
+	}
+}
+
+// 生成提醒消息
+func GenerateNoticeString(course Courses) string {
+	return fmt.Sprintf("提醒上课小助手，今天 %s 将在%s %s 上【%s】课，%s", course.Times.Start, course.Classroom, course.ClassroomId, course.Title, course.Remarks)
+}
+
+// 通知指定时间 id 的全部课程
+func PushTimeAllCourses(timeId int) {
+	// t_week := int(time.Now().Weekday())
+	t_week := 3
+	t_cycle := 1
+
+	// 获取指定时间状态为启用通知的课程
+	ls, _ := GetAllCourses(map[string]string{"times_id": fmt.Sprint(timeId), "status": "1"}, nil, nil, nil, 0, -1)
+	for _, course := range ls {
+		if course.WeekTime == t_week {
+			// 是今天的课，开始判断是否是这周的课。
+
+			var _cycle_obj interface{}
+			json.Unmarshal([]byte(course.Cycle), &_cycle_obj)
+			cycle_list := _cycle_obj.([]interface{})
+			for _, cycle := range cycle_list {
+				c_cycle := int(cycle.(float64))
+				if c_cycle == t_cycle {
+					// 是这周且是今天的课
+					msg := GenerateNoticeString(course)
+					helper.SendGroupMessage(594595615, msg)
+					break
+				}
+			}
+		}
 	}
 }

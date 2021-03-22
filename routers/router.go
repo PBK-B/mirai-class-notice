@@ -31,12 +31,19 @@ func init() {
 			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
 			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
+			web.NSRouter("/push", &apis.TimesController{}, "get:ApiTimePush"),
+			web.NSRouter("/test", &apis.TimesController{}, "get:ApiTimeTest"),
 		),
 
 		// 课表相关 API
 		web.NSNamespace("/course",
 			web.NSRouter("/create", &apis.CoursesController{}, "post:ApiCreateCourses"),
 			web.NSRouter("/list", &apis.CoursesController{}, "get:ApiCoursesList"),
+		),
+
+		// 机器人相关 API
+		web.NSNamespace("/bot",
+			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
 		),
 	)
 
