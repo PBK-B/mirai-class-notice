@@ -8,6 +8,7 @@ import Home from "./Home";
 import UserControll from "./UserControll";
 import TimeControll from "./TimeControll";
 import CourseControll from "./CourseControll";
+import SystemSetup from "./SystemSetup";
 
 const { useState, useEffect } = React;
 
@@ -18,7 +19,7 @@ export default function App() {
     window.location.href = "/login";
   };
 
-  const [activeKey, setactiveKey] = useState("1");
+  const [activeKey, setactiveKey] = useState("4");
   const [user, setuser] = useState({});
 
   const apiGetMe = () => {
@@ -63,13 +64,14 @@ export default function App() {
     2: <UserControll />,
     3: <TimeControll />,
     4: <CourseControll />,
+    5: <SystemSetup />,
   };
 
   return (
     <Container style={{ height: "100%" }}>
       <AppHeader user={user} />
 
-      <FlexboxGrid style={{ height: "100%" }}>
+      <FlexboxGrid style={{ minHeight: 740 }}>
         <FlexboxGrid.Item
           style={{
             height: "100%",
@@ -94,7 +96,6 @@ export default function App() {
               margin: "auto",
               maxWidth: "1200px",
             }}
-
             className="app-content"
           >
             {AppContents[activeKey]}

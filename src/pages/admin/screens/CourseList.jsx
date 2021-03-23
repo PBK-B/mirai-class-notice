@@ -150,7 +150,7 @@ export default function CourseList(props) {
             <Cell>
               {(rowData) => {
                 function handleAction() {
-                  alert(`id:${rowData.status}`);
+                  alert(`id:${rowData.id}`);
                 }
                 return (
                   <span>
