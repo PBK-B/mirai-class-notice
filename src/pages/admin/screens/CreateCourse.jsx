@@ -85,7 +85,7 @@ function WeekTimeSelector(props) {
   return (
     <Row style={style}>
       {selectorData?.map((item, index) => (
-        <Col key={index} xs={1} justify="center" style={{ marginBottom: 20 }}>
+        <Col key={index} xs={1} justify="center" style={{ marginBottom: 20, marginRight: 5 }}>
           {item?.select ? (
             <Button
               style={{ color: "#FFF" }}
@@ -354,6 +354,7 @@ export default function CreateCourse(props) {
             data={timeList}
             groupBy="role"
             defaultValue={timeId}
+            value={timeId}
             onChange={(value) => {
               settimeId(value);
             }}
@@ -365,7 +366,7 @@ export default function CreateCourse(props) {
         <p style={{ marginBottom: 20 }}>上课周数</p>
 
         <WeekTimeSelector
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
+          data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]}
           operation={wtOperation}
           onDataChange={(data) => {
             const dataArray = [];
