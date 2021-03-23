@@ -43,7 +43,7 @@ export default function CourseList(props) {
         "九",
         "十",
       ];
-      data_array = data_array.map((item, index) => {
+      data_array = data_array?.map((item, index) => {
         return {
           ...item,
           time: new Date().toUTCString(),
@@ -63,11 +63,11 @@ export default function CourseList(props) {
   const onChangePage = (coursesList, value) => {
     setactivePage(value);
     const index = displayLength * (value - 1);
-    const newArray = coursesList.slice(index, index + displayLength);
+    const newArray = coursesList?.slice(index, index + displayLength);
     setcourses(newArray);
   };
 
-  if (loading || !courses)
+  if (loading)
     return <Loader backdrop content="loading..." vertical />;
 
   return (
@@ -169,7 +169,7 @@ export default function CourseList(props) {
           lengthMenu={lengthMenu}
           displayLength={10}
           activePage={activePage}
-          total={coursesList.length}
+          total={coursesList?.length || 0}
           onChangeLength={(value) => {
             // console.log("改变每页长度", value);
             // setdisplayLength(value);

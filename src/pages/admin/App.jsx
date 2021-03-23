@@ -19,7 +19,7 @@ export default function App() {
     window.location.href = "/login";
   };
 
-  const [activeKey, setactiveKey] = useState("4");
+  const [activeKey, setactiveKey] = useState("1");
   const [user, setuser] = useState({});
 
   const apiGetMe = () => {

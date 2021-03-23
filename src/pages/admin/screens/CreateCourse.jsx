@@ -29,7 +29,7 @@ function WeekTimeSelector(props) {
     let newData;
     switch (operation) {
       case "all":
-        newData = data.map((item, index) => {
+        newData = data?.map((item, index) => {
           return {
             index,
             value: item,
@@ -38,7 +38,7 @@ function WeekTimeSelector(props) {
         });
         break;
       case "singular":
-        newData = data.map((item, index) => {
+        newData = data?.map((item, index) => {
           return {
             index,
             value: item,
@@ -47,7 +47,7 @@ function WeekTimeSelector(props) {
         });
         break;
       case "even":
-        newData = data.map((item, index) => {
+        newData = data?.map((item, index) => {
           return {
             index,
             value: item,
@@ -56,7 +56,7 @@ function WeekTimeSelector(props) {
         });
         break;
       default:
-        newData = data.map((item, index) => {
+        newData = data?.map((item, index) => {
           return {
             index,
             value: item,
@@ -84,7 +84,7 @@ function WeekTimeSelector(props) {
 
   return (
     <Row style={style}>
-      {selectorData.map((item, index) => (
+      {selectorData?.map((item, index) => (
         <Col key={index} xs={1} justify="center" style={{ marginBottom: 20 }}>
           {item?.select ? (
             <Button
@@ -369,7 +369,7 @@ export default function CreateCourse(props) {
           operation={wtOperation}
           onDataChange={(data) => {
             const dataArray = [];
-            data.map((item, index) => {
+            data?.map((item, index) => {
               if (!item.select) {
                 return;
               }

@@ -89,7 +89,7 @@ export default function UserControll() {
 
   if (data) {
     let { data: data_array } = data;
-    data_array = data_array.map((item, index) => {
+    data_array = data_array?.map((item, index) => {
       return {
         ...item,
         status: item.status == 1 ? "启用" : "禁用",
