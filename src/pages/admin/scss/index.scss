@@ -10,6 +10,10 @@ body {
     text-decoration: none;
   }
 
+  .app-content {
+    min-height: 85vh;
+  }
+
   .custom-input-number {
     input {
       text-align: center;
@@ -17,6 +21,25 @@ body {
 
     .rs-input-number-btn-group-vertical {
       display: none;
+    }
+  }
+
+  .page-system {
+    .list-view {
+      .item-view {
+        padding: 25px 0;
+      }
+      .item-title {
+        text-align: end;
+      }
+
+      button {
+        color: #fff;
+      }
+    }
+
+    .qq-name {
+      padding: 7px 0;
     }
   }
 

@@ -71,7 +71,7 @@ export default function App() {
     <Container style={{ height: "100%" }}>
       <AppHeader user={user} />
 
-      <FlexboxGrid style={{ minHeight: 740 }}>
+      <FlexboxGrid>
         <FlexboxGrid.Item
           style={{
             height: "100%",
