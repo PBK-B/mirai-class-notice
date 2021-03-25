@@ -94,7 +94,7 @@ func (c *TimesController) ApiTimeGroupList() {
 }
 
 func (c *TimesController) ApiTimeTest() {
-	fmt.Println("-------------- Hello Test 001 --------------")
+	// fmt.Println("-------------- Hello Test 001 --------------")
 	// helper.InitBot()
 	models.PushTimeAllCourses(1)
 	callBackResult(&c.Controller, 200, "", nil)
