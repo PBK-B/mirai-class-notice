@@ -185,6 +185,7 @@ func TimesRunAllTask() {
 
 			if h >= 0 && h < 24 && m >= 0 && m <= 60 {
 				// 时间合法
+				// TODO: 这里需要加上一个提前一个设定的时间
 				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
 				tk := task.NewTask(time.Remarks, ts, func(ctx context.Context) error {
 					fmt.Println("执行了 ", time.Remarks)
