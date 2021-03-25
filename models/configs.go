@@ -31,19 +31,20 @@ func AddConfigs(m *Configs) (c *Configs, err error) {
 func UpdateConfigs(m *Configs) (c *Configs, err error) {
 	o := orm.NewOrm()
 	var v Configs
-	if m.Id == 0 {
+	if m.Name != "" {
 		v = Configs{Name: m.Name}
 	} else {
 		v = Configs{Id: m.Id}
 	}
 	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
+	if err = o.Read(&v, "Name"); err == nil {
 		var id int64
-		if id, err = o.Update(m); err == nil {
+		v.Data = m.Data
+		if id, err = o.Update(&v); err == nil {
 			return GetConfigsById(int(id))
 		}
 	}
-	return
+	return nil, err
 }
 
 // 通过 id 获取 config
