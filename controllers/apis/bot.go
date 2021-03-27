@@ -10,13 +10,6 @@ type BotController struct {
 	beego.Controller
 }
 
-type BotConfigDataJsonType struct {
-	account      int64
-	password     string
-	password_md5 string
-	group_code   int64
-}
-
 func (c *BotController) ApiBotLogin() {
 
 	b_account, _ := c.GetInt64("account")
@@ -49,6 +42,43 @@ func (c *BotController) ApiBotLogin() {
 			"password":     b_password,
 			"password_md5": "",
 			"group_code":   0,
+		})
+	}
+
+	callBackResult(&c.Controller, 200, "ok", nil)
+	c.Finish()
+}
+
+func (c *BotController) ApiUpdateBotGroupcode() {
+	group_code, _ := c.GetInt64("group_code")
+
+	if group_code == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		return
+	}
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+	// helper.InitBot(b_account, b_password)
+
+	config, err := models.GetConfigsDataByName("bot")
+
+	if err == nil && config != nil {
+		b_a := config["account"].(float64)
+		b_p := config["password"].(string)
+		b_p_md5 := config["password_md5"].(string)
+		models.UpdateConfigByData("bot", map[string]interface{}{
+			"account":      b_a,
+			"password":     b_p,
+			"password_md5": b_p_md5,
+			"group_code":   group_code,
+		})
+	} else {
+		models.AddConfigByData("bot", map[string]interface{}{
+			"account":      0,
+			"password":     "",
+			"password_md5": "",
+			"group_code":   group_code,
 		})
 	}
 
