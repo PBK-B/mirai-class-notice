@@ -11,8 +11,22 @@ import {
   InputNumber,
   InputGroup,
 } from "rsuite";
+import useAxios from "axios-hooks";
+
+const { useState, useEffect } = React;
 
 export default function SystemSetup() {
+  const [botInfo, setbotInfo] = useState({});
+  const [{ data: botInfoData, loading, error }, refetch] = useAxios({
+    url: "/api/bot/info",
+  });
+
+  useEffect(() => {
+    if (botInfoData?.data) {
+      setbotInfo(botInfoData?.data);
+    }
+  }, [botInfoData]);
+
   return (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
@@ -138,13 +152,20 @@ export default function SystemSetup() {
             </Col>
 
             <Col xs={12} style={{ paddingLeft: 80 }}>
-              <Avatar
-                circle
-                size="lg"
-                src="https://avatars2.githubusercontent.com/u/12592949?s=460&v=4"
-              />
-              <p className="qq-name">好傻好天真…</p>
-              <Tag color="green">在线</Tag>
+              {botInfo?.account ? (
+                <>
+                  <Avatar
+                    circle
+                    size="lg"
+                    style={{ background: "#0001" }}
+                    src={botInfo?.avatar}
+                  />
+                  <p className="qq-name">{botInfo?.nick_name}</p>
+                  <Tag color={botInfo?.on_line ? "green" : "red"}>
+                    {botInfo?.on_line ? "在线" : "离线"}
+                  </Tag>
+                </>
+              ) : null}
             </Col>
           </FlexboxGrid>
         </div>

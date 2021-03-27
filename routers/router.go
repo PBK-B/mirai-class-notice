@@ -44,6 +44,8 @@ func init() {
 		// 机器人相关 API
 		web.NSNamespace("/bot",
 			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
+			web.NSRouter("/relogin", &apis.BotController{}, "post:ApiBotReLogin"),
+			web.NSRouter("/info", &apis.BotController{}, "get:ApiBotGetInfo"),
 			web.NSNamespace("/update",
 				web.NSRouter("/groupcode", &apis.BotController{}, "post:ApiUpdateBotGroupcode"),
 			),
