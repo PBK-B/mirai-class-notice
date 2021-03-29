@@ -10,14 +10,30 @@ import {
   Tag,
   InputNumber,
   InputGroup,
+  DatePicker,
+  SelectPicker,
+  Notification,
 } from "rsuite";
+
 import useAxios from "axios-hooks";
+import axios from "axios";
 
 const { useState, useEffect } = React;
 
 export default function SystemSetup() {
-  const [botInfo, setbotInfo] = useState({});
-  const [{ data: botInfoData, loading, error }, refetch] = useAxios({
+  const [systemInfo, setsystemInfo] = useState();
+  const [
+    { data: systemInfoData, loading: systemLoading, error: systemError },
+    systemRefch,
+  ] = useAxios({
+    url: "/api/system/info",
+  });
+
+  const [botInfo, setbotInfo] = useState();
+  const [
+    { data: botInfoData, loading: botLoading, error: botError },
+    botRefetch,
+  ] = useAxios({
     url: "/api/bot/info",
   });
 
@@ -25,9 +41,156 @@ export default function SystemSetup() {
     if (botInfoData?.data) {
       setbotInfo(botInfoData?.data);
     }
-  }, [botInfoData]);
 
-  return (
+    if (systemInfoData?.data) {
+      const info = systemInfoData?.data;
+      const newInfo = {
+        school_time: new Date(info?.school_time * 1000), // 开学时间设置
+        few_weeks: info?.few_weeks, // 这学期共几周
+        notice_minute: info?.notice_minute, // 提前多少分钟通知
+      };
+      setsystemInfo(newInfo);
+    }
+  }, [botInfoData, systemInfoData]);
+
+  const [schoolTime, setschoolTime] = useState();
+  const [schoolTimeLoad, setschoolTimeLoad] = useState(false);
+  const APIUpdateSchoolTime = (time) => {
+    if (!time) {
+      Notification.error({
+        title: "参数异常！",
+      });
+      return;
+    }
+
+    setschoolTimeLoad(true);
+
+    const params = new URLSearchParams();
+    params.append("time", time);
+
+    axios
+      .post("/api/system/schooltime", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setschoolTimeLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改开学时间数据成功！`,
+          });
+
+          // 修改数据成功，刷新页面数据
+          systemRefch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setschoolTimeLoad(false);
+      });
+  };
+
+  const inputFewWeeksRef = React.createRef();
+  const [fewWeeks, setfewWeeks] = useState(0);
+  const [fewWeeksLoad, setfewWeeksLoad] = useState(false);
+  const APIUpdateFewWeeks = (weeks) => {
+    if (!weeks) {
+      Notification.error({
+        title: "参数异常！",
+      });
+      return;
+    }
+
+    setfewWeeksLoad(true);
+
+    const params = new URLSearchParams();
+    params.append("weeks", weeks);
+
+    axios
+      .post("/api/system/fewweeks", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setfewWeeksLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改这学期共几周数据成功！`,
+          });
+
+          // 修改数据成功，刷新页面数据
+          systemRefch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setfewWeeksLoad(false);
+      });
+  };
+
+  const inputNoticeMinuteRef = React.createRef();
+  const [noticeMinute, setnoticeMinute] = useState(0);
+  const [noticeMinuteLoad, setnoticeMinuteLoad] = useState(false);
+  const APIUpdateNoticeMinute = (minute) => {
+    if (!minute) {
+      Notification.error({
+        title: "参数异常！",
+      });
+      return;
+    }
+
+    setnoticeMinuteLoad(true);
+
+    const params = new URLSearchParams();
+    params.append("minute", minute);
+
+    axios
+      .post("/api/system/noticeminute", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setnoticeMinuteLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改提前多少分钟通知时间成功！`,
+          });
+
+          // 修改数据成功，刷新页面数据
+          systemRefch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setnoticeMinuteLoad(false);
+      });
+  };
+
+  return systemInfo && botInfo ? (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
       <div className="list-view">
@@ -56,32 +219,68 @@ export default function SystemSetup() {
               <p className="item-title">开学时间设置：</p>
             </Col>
             <Col xs={6}>
-              <Input placeholder="Default Input" />
+              <DatePicker
+                style={{ width: 320 }}
+                placeholder="选择日期"
+                defaultValue={systemInfo?.school_time}
+                showWeekNumbers
+                onChange={(date) => {
+                  const time = parseInt(date.getTime() / 1000);
+                  // console.log("时间", time);
+                  setschoolTime(time);
+                }}
+              />
             </Col>
             <Col xs={1}></Col>
-            <Button style={{ color: "#FFF" }} appearance="primary">
+            <Button
+              style={{ color: "#FFF" }}
+              appearance="primary"
+              loading={schoolTimeLoad}
+              onClick={() => APIUpdateSchoolTime(schoolTime)}
+            >
               保存修改
             </Button>
           </Row>
+
           <Row style={{ marginTop: 20 }}>
             <Col justify="center" xs={4}>
               <p className="item-title">这学期共几周：</p>
             </Col>
             <Col xs={6}>
               <InputGroup>
-                <InputGroup.Button onClick={() => {}}>-</InputGroup.Button>
+                <InputGroup.Button
+                  onClick={() => {
+                    inputFewWeeksRef.current.handleMinus();
+                  }}
+                >
+                  -
+                </InputGroup.Button>
                 <InputNumber
                   className={"custom-input-number"}
-                  defaultValue={1}
-                  max={999}
+                  defaultValue={systemInfo?.few_weeks}
+                  ref={inputFewWeeksRef}
+                  max={99}
                   min={1}
-                  onChange={(value) => {}}
+                  onChange={(value) => {
+                    setfewWeeks(value);
+                  }}
                 />
-                <InputGroup.Button onClick={() => {}}>+</InputGroup.Button>
+                <InputGroup.Button
+                  onClick={() => {
+                    inputFewWeeksRef.current.handlePlus();
+                  }}
+                >
+                  +
+                </InputGroup.Button>
               </InputGroup>
             </Col>
             <Col xs={1}></Col>
-            <Button style={{ color: "#FFF" }} appearance="primary">
+            <Button
+              style={{ color: "#FFF" }}
+              loading={fewWeeksLoad}
+              onClick={() => APIUpdateFewWeeks(fewWeeks)}
+              appearance="primary"
+            >
               保存修改
             </Button>
           </Row>
@@ -92,19 +291,39 @@ export default function SystemSetup() {
             </Col>
             <Col xs={6}>
               <InputGroup>
-                <InputGroup.Button onClick={() => {}}>-</InputGroup.Button>
+                <InputGroup.Button
+                  onClick={() => {
+                    inputNoticeMinuteRef.current.handleMinus();
+                  }}
+                >
+                  -
+                </InputGroup.Button>
                 <InputNumber
                   className={"custom-input-number"}
-                  defaultValue={1}
+                  ref={inputNoticeMinuteRef}
+                  defaultValue={systemInfo?.notice_minute}
                   max={999}
                   min={1}
-                  onChange={(value) => {}}
+                  onChange={(value) => {
+                    setnoticeMinute(value);
+                  }}
                 />
-                <InputGroup.Button onClick={() => {}}>+</InputGroup.Button>
+                <InputGroup.Button
+                  onClick={() => {
+                    inputNoticeMinuteRef.current.handlePlus();
+                  }}
+                >
+                  +
+                </InputGroup.Button>
               </InputGroup>
             </Col>
             <Col xs={1}></Col>
-            <Button style={{ color: "#FFF" }} appearance="primary">
+            <Button
+              style={{ color: "#FFF" }}
+              appearance="primary"
+              loading={noticeMinuteLoad}
+              onClick={() => APIUpdateNoticeMinute(noticeMinute)}
+            >
               保存修改
             </Button>
           </Row>
@@ -120,7 +339,10 @@ export default function SystemSetup() {
                   <p className="item-title">QQ 账号：</p>
                 </Col>
                 <Col xs={10}>
-                  <Input placeholder="Default Input" />
+                  <Input
+                    placeholder="Default Input"
+                    defaultValue={botInfo?.account}
+                  />
                 </Col>
               </FlexboxGrid>
               <FlexboxGrid style={{ marginBottom: 20 }} justify="end">
@@ -143,7 +365,18 @@ export default function SystemSetup() {
                   <p className="item-title">通知 QQ 群号：</p>
                 </Col>
                 <Col xs={10}>
-                  <Input placeholder="Default Input" />
+                  <SelectPicker
+                    data={botInfo?.group_list?.map((item, index) => {
+                      return {
+                        label: `${item.code} (${item.name})`,
+                        value: item.code,
+                        role: "Master",
+                      };
+                    })}
+                    defaultValue={botInfo?.group_list[0]?.code}
+                    style={{ width: 224 }}
+                    searchable={false}
+                  />
                 </Col>
               </FlexboxGrid>
               <FlexboxGrid justify="end">
@@ -171,5 +404,5 @@ export default function SystemSetup() {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }

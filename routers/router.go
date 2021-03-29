@@ -41,6 +41,14 @@ func init() {
 			web.NSRouter("/list", &apis.CoursesController{}, "get:ApiCoursesList"),
 		),
 
+		// 系统相关 API
+		web.NSNamespace("/system",
+			web.NSRouter("/info", &apis.SystemController{}, "get:ApiSystemGetInfo"),
+			web.NSRouter("/schooltime", &apis.SystemController{}, "post:ApiSystemSetSchoolTime"),
+			web.NSRouter("/fewweeks", &apis.SystemController{}, "post:ApiSystemSetFewWeeks"),
+			web.NSRouter("/noticeminute", &apis.SystemController{}, "post:ApiSystemSetNoticeMinute"),
+		),
+
 		// 机器人相关 API
 		web.NSNamespace("/bot",
 			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
