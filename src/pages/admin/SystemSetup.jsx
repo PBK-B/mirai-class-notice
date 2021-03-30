@@ -190,6 +190,51 @@ export default function SystemSetup() {
       });
   };
 
+  const [groupCode, setgroupCode] = useState(0);
+  const [groupCodeLoad, setgroupCodeLoad] = useState(false);
+  const APIUpdateGroupCode = (code) => {
+    if (!code) {
+      Notification.error({
+        title: "参数异常！",
+      });
+      return;
+    }
+
+    setgroupCodeLoad(true);
+
+    const params = new URLSearchParams();
+    params.append("group_code", code);
+
+    axios
+      .post("/api/bot/update/groupcode", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setgroupCodeLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改通知的QQ群号成功！`,
+          });
+
+          // 修改数据成功，刷新页面数据
+          systemRefch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setgroupCodeLoad(false);
+      });
+  };
+
   return systemInfo && botInfo ? (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
@@ -373,14 +418,28 @@ export default function SystemSetup() {
                         role: "Master",
                       };
                     })}
-                    defaultValue={botInfo?.group_list[0]?.code}
+                    defaultValue={
+                      botInfo?.group_code || botInfo?.group_list[0]?.code
+                    }
+                    onChange={(value) => {
+                      // console.log("选中群号", value);
+                      setgroupCode(value);
+                    }}
                     style={{ width: 224 }}
                     searchable={false}
                   />
                 </Col>
               </FlexboxGrid>
               <FlexboxGrid justify="end">
-                <Button appearance="primary">保存修改</Button>
+                <Button
+                  loading={groupCodeLoad}
+                  appearance="primary"
+                  onClick={() => {
+                    APIUpdateGroupCode(groupCode);
+                  }}
+                >
+                  保存修改
+                </Button>
               </FlexboxGrid>
             </Col>
 

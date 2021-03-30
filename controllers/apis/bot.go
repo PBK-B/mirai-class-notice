@@ -93,11 +93,19 @@ func (c *BotController) ApiBotGetInfo() {
 	// 读取缓存的数据
 	config, err := models.GetConfigsDataByName("bot_info")
 
+	// 读取 bot 配置数据
+	bot_c, bot_c_err := models.GetConfigsDataByName("bot")
+
 	// 判断账号是否登陆
 	info := bot.Instance
 	if info == nil {
 		if err == nil && config != nil {
 			config["on_line"] = false
+
+			if bot_c_err == nil && bot_c != nil {
+				config["group_code"] = bot_c["group_code"]
+			}
+
 			c.Data["json"] = config
 			callBackResult(&c.Controller, 200, "", c.Data["json"])
 			c.Finish()
@@ -117,12 +125,18 @@ func (c *BotController) ApiBotGetInfo() {
 		}
 		groupList = append(groupList, new_group)
 	}
+
 	botInfo := map[string]interface{}{
 		"account":    info.Uin,
 		"nick_name":  info.Nickname,
 		"avatar":     "https://q2.qlogo.cn/headimg_dl?spec=100&dst_uin=" + strconv.FormatInt(info.Uin, 10),
 		"on_line":    info.Online,
 		"group_list": groupList,
+		"group_code": 0,
+	}
+
+	if bot_c_err == nil && bot_c != nil {
+		botInfo["group_code"] = bot_c["group_code"]
 	}
 
 	// 更新缓存数据
@@ -170,6 +184,6 @@ func (c *BotController) ApiUpdateBotGroupcode() {
 		})
 	}
 
-	callBackResult(&c.Controller, 200, "ok", nil)
+	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()
 }
