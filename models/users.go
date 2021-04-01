@@ -18,6 +18,15 @@ func init() {
 	// orm.RegisterModel(new(Users))
 }
 
+func GetUserById(id int) (v *Users, err error) {
+	o := orm.NewOrm()
+	v = &Users{Id: id}
+	if err = o.QueryTable(new(Users)).Filter("Id", id).RelatedSel().One(v); err == nil {
+		return v, nil
+	}
+	return nil, err
+}
+
 // AddUsers insert a new Users into database and returns
 // last inserted Id on success.
 func AddUsers(m *Users) (user Users, err error) {

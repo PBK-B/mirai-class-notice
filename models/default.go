@@ -39,7 +39,7 @@ func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	connection_url := helper.GetConnectionURL(username, password, host, database)
 
-	fmt.Println(tag + "连接URL是: " + connection_url)
+	// fmt.Println(tag + "连接URL是: " + connection_url)
 
 	orm.RegisterDataBase("default", driver, connection_url)
 
@@ -55,6 +55,15 @@ func init() {
 	// 第二个参数为 true 则强制重新建表
 	orm.RunSyncdb("default", false, true)
 
-	// addUser("bin", "123456") // 添加默认用户
+	// 添加默认用户 admin
+	d_user, d_u_err := GetUserById(1)
+	if d_u_err != nil || d_user == nil {
+		addUser("admin", "admin")
+		fmt.Println(tag + "注册默认用户 admin 成功！")
+	}
+
+	// 注册全部上课时间定时任务
+	TimesRunAllTask()
+	fmt.Println(tag + "注册全部上课时间定时任务成功！")
 
 }
