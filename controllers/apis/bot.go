@@ -80,7 +80,7 @@ func (c *BotController) ApiBotReLogin() {
 		return
 	}
 
-	callBackResult(&c.Controller, 200, "ok", nil)
+	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()
 }
 
@@ -148,6 +148,19 @@ func (c *BotController) ApiBotGetInfo() {
 
 	c.Data["json"] = botInfo
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
+	c.Finish()
+}
+
+func (c *BotController) ApiBotTest() {
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+	// helper.InitBot(b_account, b_password)
+
+	// defer task.StopTask()
+
+	// models.PushTimeAllCourses(1)
+	callBackResult(&c.Controller, 200, "ok!!!", nil)
 	c.Finish()
 }
 

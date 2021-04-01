@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"class_notice/helper"
 	"class_notice/models"
-	"fmt"
 
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -98,13 +96,5 @@ func (c *TimesController) ApiTimeTest() {
 	// helper.InitBot()
 	models.PushTimeAllCourses(1)
 	callBackResult(&c.Controller, 200, "", nil)
-	c.Finish()
-}
-
-func (c *TimesController) ApiTimePush() {
-	msg := c.GetString("m")
-	fmt.Println("Hello Test 002")
-	helper.SendGroupMessage(594595615, msg)
-	callBackResult(&c.Controller, 200, "ok", nil)
 	c.Finish()
 }
