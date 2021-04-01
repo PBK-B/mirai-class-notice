@@ -235,6 +235,49 @@ export default function SystemSetup() {
       });
   };
 
+  const [reLoginLoad, setreLoginLoad] = useState(false);
+  const APIreLogin = () => {
+    if (botInfo?.on_line) {
+      Notification.error({
+        title: "Bot 账号已在线",
+      });
+      return;
+    }
+
+    setreLoginLoad(true);
+
+    const params = new URLSearchParams();
+
+    axios
+      .post("/api/bot/relogin", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setreLoginLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "Bot 账号重新登陆失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `Bot 账号重新登陆成功！`,
+          });
+
+          // Bot 账号重新登陆成功，刷新页面数据
+          botRefetch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "重新登陆失败，" + error || "重新登陆失败，请稍后重试！",
+        });
+        setreLoginLoad(false);
+      });
+  };
+
   return systemInfo && botInfo ? (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
@@ -399,6 +442,16 @@ export default function SystemSetup() {
                 </Col>
               </FlexboxGrid>
               <FlexboxGrid justify="end">
+                {botInfo?.account && !botInfo?.on_line ? (
+                  <Button
+                    appearance="primary"
+                    style={{ marginRight: 20 }}
+                    onClick={() => APIreLogin()}
+                  >
+                    重新登陆
+                  </Button>
+                ) : null}
+
                 <Button appearance="primary">登陆账号</Button>
               </FlexboxGrid>
 
