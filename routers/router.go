@@ -54,6 +54,7 @@ func init() {
 			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
 			web.NSRouter("/relogin", &apis.BotController{}, "post:ApiBotReLogin"),
 			web.NSRouter("/info", &apis.BotController{}, "get:ApiBotGetInfo"),
+			// web.NSRouter("/test", &apis.BotController{}, "get:ApiBotTest"),
 			web.NSNamespace("/update",
 				web.NSRouter("/groupcode", &apis.BotController{}, "post:ApiUpdateBotGroupcode"),
 			),

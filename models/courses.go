@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/client/orm"
 )
@@ -192,13 +194,45 @@ func GenerateNoticeString(course Courses) string {
 // 通知指定时间 id 的全部课程
 func PushTimeAllCourses(timeId int) {
 	// t_week := int(time.Now().Weekday())
-	t_week := 3
-	t_cycle := 1
+
+	bot_group_code := int64(0)
+
+	botConfig, botConfigErr := GetConfigsDataByName("bot")
+	systemConfig, systemConfigErr := GetConfigsDataByName("system")
+	if botConfigErr != nil || botConfig == nil {
+		log.Panicln("机器人未配置！")
+		return
+	}
+
+	// 获取用户设置的通知 QQ 群号
+	bot_group_code = int64(botConfig["group_code"].(float64))
+
+	// 获取当前是星期几
+	timer := time.Now()
+	t_week := timer.Weekday()
+
+	// 获取当前是距离开学之后的第几周
+	t_cycle := 0
+	timerOld := timer
+	if systemConfig != nil && systemConfigErr == nil {
+		// 获取设置的时间成功
+		timerOld = time.Unix(int64(systemConfig["school_time"].(float64)), 0)
+	}
+	// 计算两个时间的差值 返回的是纳秒 按需求自行计算其他单位
+	timeDuration := timer.Sub(timerOld)
+	t_cycle = int(timeDuration/1000/1000/1000/24/60/60/7) + 1 // 这里 +1 是因为当去除小数点加一才等于当前周
 
 	// 获取指定时间状态为启用通知的课程
 	ls, _ := GetAllCourses(map[string]string{"times_id": fmt.Sprint(timeId), "status": "1"}, nil, nil, nil, 0, -1)
 	for _, course := range ls {
-		if course.WeekTime == t_week {
+
+		// 将用户设置的周日(7) 转换为国际时间规定的周日(0)
+		week_time := course.WeekTime
+		if week_time >= 7 {
+			week_time = 0
+		}
+
+		if week_time == int(t_week) {
 			// 是今天的课，开始判断是否是这周的课。
 
 			var _cycle_obj interface{}
@@ -206,10 +240,13 @@ func PushTimeAllCourses(timeId int) {
 			cycle_list := _cycle_obj.([]interface{})
 			for _, cycle := range cycle_list {
 				c_cycle := int(cycle.(float64))
+
+				// fmt.Printf("%d  课程是第几周：%d  当前是第几周：%d \n", course.Id, c_cycle, t_cycle)
+
 				if c_cycle == t_cycle {
 					// 是这周且是今天的课
 					msg := GenerateNoticeString(course)
-					helper.SendGroupMessage(594595615, msg)
+					helper.SendGroupMessage(bot_group_code, msg)
 					break
 				}
 			}

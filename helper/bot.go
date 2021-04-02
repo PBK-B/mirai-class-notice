@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"log"
 	"os"
 	"os/signal"
 
@@ -46,5 +47,10 @@ func InitBot(account int64, password string) {
 
 func SendGroupMessage(groupCode int64, msg string) {
 	m := message.NewSendingMessage().Append(message.NewText(msg))
-	bot.Instance.QQClient.SendGroupMessage(groupCode, m)
+
+	if bot.Instance != nil {
+		bot.Instance.QQClient.SendGroupMessage(groupCode, m)
+	} else {
+		log.Println("通知消息发送失败，Bot 账号未登陆！")
+	}
 }
