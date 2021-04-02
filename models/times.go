@@ -30,6 +30,7 @@ func AddTimes(m *Times) (time *Times, err error) {
 	id, err := o.Insert(m)
 	if err == nil {
 		time, err = GetTimesById(int(id))
+		TimesRunAllTask()
 	}
 	return
 }
@@ -130,6 +131,7 @@ func UpdateTimesById(m *Times) (err error) {
 		if num, err = o.Update(m); err == nil {
 			fmt.Println("Number of records updated in database:", num)
 		}
+		TimesRunAllTask()
 	}
 	return
 }
@@ -186,6 +188,9 @@ func TimesRunAllTask() {
 			if h >= 0 && h < 24 && m >= 0 && m <= 60 {
 				// 时间合法
 				// TODO: 这里需要加上一个提前一个设定的时间
+				h = h - 1
+				// 现在先默认提前一个小时通知
+
 				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
 				tk := task.NewTask(time.Remarks, ts, func(ctx context.Context) error {
 					fmt.Println("执行了 ", time.Remarks)
@@ -194,6 +199,8 @@ func TimesRunAllTask() {
 				})
 				task.AddTask(time.Remarks, tk) // 将任务添加到全局任务
 			}
+
+			task.StartTask()
 
 			// fmt.Println(s[0], s[1], len(s))
 		}
