@@ -3,6 +3,7 @@ package controllers
 import (
 	"class_notice/helper"
 	"class_notice/models"
+	"fmt"
 	"strconv"
 
 	"github.com/Logiase/MiraiGo-Template/bot"
@@ -50,7 +51,13 @@ func (c *BotController) ApiBotLogin() {
 
 	go helper.InitBot(b_account, b_password)
 
-	callBackResult(&c.Controller, 200, "ok", nil)
+	if err != nil {
+		callBackResult(&c.Controller, 200, err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()
 }
 
@@ -196,6 +203,30 @@ func (c *BotController) ApiUpdateBotGroupcode() {
 			"group_code":   group_code,
 		})
 	}
+
+	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
+	c.Finish()
+}
+
+func (c *BotController) ApiBotSubmitCaptcha() {
+	code := c.GetString("code")
+	// sign := c.GetString("sign")
+
+	var c_sign []string
+	c.Ctx.Input.Bind(&c_sign, "sign")
+
+	if code == "" || len(c_sign) == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		return
+	}
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	fmt.Printf("String to byte： %s  \n", c_sign)
+	fmt.Printf("String to byte： %b  \n", len(c_sign))
+
+	// helper.BotSubmitCaptcha(code, c_sign)
 
 	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()

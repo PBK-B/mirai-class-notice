@@ -31,8 +31,6 @@ func init() {
 			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
 			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
-			web.NSRouter("/push", &apis.TimesController{}, "get:ApiTimePush"),
-			web.NSRouter("/test", &apis.TimesController{}, "get:ApiTimeTest"),
 		),
 
 		// 课表相关 API
@@ -53,6 +51,7 @@ func init() {
 		web.NSNamespace("/bot",
 			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
 			web.NSRouter("/relogin", &apis.BotController{}, "post:ApiBotReLogin"),
+			web.NSRouter("/captcha", &apis.BotController{}, "post:ApiBotSubmitCaptcha"),
 			web.NSRouter("/info", &apis.BotController{}, "get:ApiBotGetInfo"),
 			// web.NSRouter("/test", &apis.BotController{}, "get:ApiBotTest"),
 			web.NSNamespace("/update",

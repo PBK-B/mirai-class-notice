@@ -40,6 +40,9 @@ export default function SystemSetup() {
   useEffect(() => {
     if (botInfoData?.data) {
       setbotInfo(botInfoData?.data);
+      setbotAccount({
+        account: botInfoData?.data?.account,
+      });
     }
 
     if (systemInfoData?.data) {
@@ -278,6 +281,52 @@ export default function SystemSetup() {
       });
   };
 
+  const [botAccount, setbotAccount] = useState({});
+  const [botLoginLoad, setbotLoginLoad] = useState(false);
+  const APIbotLogin = (account, password) => {
+    if (!account || !password) {
+      Notification.error({
+        title: "账号或密码未输入！",
+      });
+      return;
+    }
+
+    setbotLoginLoad(true);
+
+    const params = new URLSearchParams();
+    params.append("account", account);
+    params.append("password", password);
+
+    axios
+      .post("/api/bot/login", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+        setbotLoginLoad(false);
+
+        if (code < 1) {
+          Notification.error({
+            title: "Bot 账号登陆失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `Bot 账号登陆成功！`,
+          });
+
+          // Bot 账号重新登陆成功，刷新页面数据
+          botRefetch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "登陆失败，" + error || "登陆失败，请稍后重试！",
+        });
+        setbotLoginLoad(false);
+      });
+  };
+
   return systemInfo && botInfo ? (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
@@ -430,6 +479,12 @@ export default function SystemSetup() {
                   <Input
                     placeholder="Default Input"
                     defaultValue={botInfo?.account}
+                    onChange={(value) => {
+                      setbotAccount({
+                        ...botAccount,
+                        account: value,
+                      });
+                    }}
                   />
                 </Col>
               </FlexboxGrid>
@@ -438,13 +493,23 @@ export default function SystemSetup() {
                   <p className="item-title">QQ 密码：</p>
                 </Col>
                 <Col xs={10}>
-                  <Input placeholder="Default Input" />
+                  <Input
+                    placeholder="Default Input"
+                    type="password"
+                    onChange={(value) => {
+                      setbotAccount({
+                        ...botAccount,
+                        password: value,
+                      });
+                    }}
+                  />
                 </Col>
               </FlexboxGrid>
               <FlexboxGrid justify="end">
                 {botInfo?.account && !botInfo?.on_line ? (
                   <Button
                     appearance="primary"
+                    loading={reLoginLoad}
                     style={{ marginRight: 20 }}
                     onClick={() => APIreLogin()}
                   >
@@ -452,7 +517,15 @@ export default function SystemSetup() {
                   </Button>
                 ) : null}
 
-                <Button appearance="primary">登陆账号</Button>
+                <Button
+                  appearance="primary"
+                  loading={botLoginLoad}
+                  onClick={() => {
+                    APIbotLogin(botAccount.account, botAccount.password);
+                  }}
+                >
+                  登陆账号
+                </Button>
               </FlexboxGrid>
 
               <FlexboxGrid
