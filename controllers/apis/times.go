@@ -35,8 +35,8 @@ func (c *TimesController) ApiCreateTime() {
 	}
 	_time, err := models.AddTimes(&time)
 
-	if err != nil {
-		callBackResult(&c.Controller, 403, "时间创建失败"+err.Error(), nil)
+	if err != nil || _time == nil {
+		callBackResult(&c.Controller, 200, "时间创建失败 "+err.Error(), nil)
 		c.Finish()
 		return
 	}
@@ -79,14 +79,14 @@ func (c *TimesController) ApiUpdateTime() {
 	err := models.UpdateTimesById(&time)
 
 	if err != nil {
-		callBackResult(&c.Controller, 403, "时间更新失败"+err.Error(), nil)
+		callBackResult(&c.Controller, 200, "时间更新失败 "+err.Error(), nil)
 		c.Finish()
 		return
 	}
 
 	_time, err := models.GetTimesById(t_id)
 	if err != nil {
-		callBackResult(&c.Controller, 403, "时间更新失败"+err.Error(), nil)
+		callBackResult(&c.Controller, 200, "时间更新失败 "+err.Error(), nil)
 		c.Finish()
 		return
 	}

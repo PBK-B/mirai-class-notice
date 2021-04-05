@@ -26,6 +26,31 @@ func init() {
 // AddTimes insert a new Times into database and returns
 // last inserted Id on success.
 func AddTimes(m *Times) (time *Times, err error) {
+
+	s_s := strings.Split(m.Start, ":")
+	s_e := strings.Split(m.End, ":")
+
+	if len(s_s) != 2 || len(s_e) != 2 {
+		return nil, errors.New("time: time Start or time End Illegal")
+	}
+
+	s_s0_i, err_0 := strconv.Atoi(s_s[0])
+	s_s1_i, err_1 := strconv.Atoi(s_s[1])
+	s_e0_i, err_2 := strconv.Atoi(s_e[0])
+	s_e1_i, err_3 := strconv.Atoi(s_e[1])
+
+	if err_0 != nil ||
+		err_1 != nil ||
+		err_2 != nil ||
+		err_3 != nil ||
+		s_s0_i > 24 ||
+		s_e0_i > 24 ||
+		s_s1_i > 60 ||
+		s_e1_i > 60 {
+		// 设置的时间过大或者不是数值
+		return nil, errors.New("time: The time set is too large or is not a numerical value")
+	}
+
 	o := orm.NewOrm()
 	id, err := o.Insert(m)
 	if err == nil {
@@ -178,6 +203,11 @@ func TimesRunAllTask() {
 	for _, time := range ls {
 		startStr := time.Start
 		s := strings.Split(startStr, ":")
+
+		if len(s) < 2 {
+			// 时间不合法
+			break
+		}
 
 		if s[0] != "" && s[1] != "" {
 			// 获取到时间
