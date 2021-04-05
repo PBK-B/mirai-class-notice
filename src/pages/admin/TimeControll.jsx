@@ -17,12 +17,12 @@ import {
   ControlLabel,
 } from "rsuite";
 
-const { useState } = React;
+const { useState, useEffect } = React;
 const { Column, HeaderCell, Cell, Pagination } = Table;
 
 export default function TimeControll() {
   const [{ data, loading, error }, refetch] = useAxios({
-    url: "/api/time/list",
+    url: "/api/time/list?count=999",
   });
 
   // 创建时间点部分区域
@@ -165,19 +165,33 @@ export default function TimeControll() {
   };
 
   // 表格数据处理部分代码
-  let times = [];
+  const [times, settimes] = useState([]);
+  const [timeList, settimeList] = useState([]);
+  useEffect(() => {
+    if (data) {
+      let { data: data_array } = data;
+      data_array = data_array?.map((item, index) => {
+        return {
+          ...item,
+          status: item.status == 1 ? "启用" : "禁用",
+          time: new Date().toUTCString(),
+        };
+      });
+      settimeList(data_array);
+      onChangePage(data_array, 1);
+    }
+  }, [data]);
 
-  if (data) {
-    let { data: data_array } = data;
-    data_array = data_array?.map((item, index) => {
-      return {
-        ...item,
-        status: item.status == 1 ? "启用" : "禁用",
-        time: new Date().toUTCString(),
-      };
-    });
-    times = data_array;
-  }
+  // 数据分页处理
+  const [activePage, setactivePage] = useState(1);
+  const lengthMenu = [{ label: <p>10</p>, value: 10 }];
+  const [displayLength, setdisplayLength] = useState(lengthMenu[0].value);
+  const onChangePage = (list, value) => {
+    setactivePage(value);
+    const index = displayLength * (value - 1);
+    const newArray = list?.slice(index, index + displayLength);
+    settimes(newArray);
+  };
 
   if (loading) return <Loader backdrop content="loading..." vertical />;
 
@@ -252,6 +266,22 @@ export default function TimeControll() {
             </Cell>
           </Column>
         </Table>
+        <Table.Pagination
+          lengthMenu={lengthMenu}
+          displayLength={10}
+          activePage={activePage}
+          total={timeList?.length || 0}
+          onChangeLength={(value) => {
+            console.log("改变每页长度", value);
+            // setdisplayLength(value);
+            // const newArray = coursesList.splice(value);
+            // setcourses(newArray);
+          }}
+          onChangePage={(value) => {
+            // console.log("改变的页面", value);
+            onChangePage(timeList, value);
+          }}
+        ></Table.Pagination>
       </Panel>
 
       <Modal
