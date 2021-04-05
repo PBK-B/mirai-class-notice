@@ -29,6 +29,7 @@ func init() {
 		// 时间相关 API
 		web.NSNamespace("/time",
 			web.NSRouter("/create", &apis.TimesController{}, "post:ApiCreateTime"),
+			web.NSRouter("/update", &apis.TimesController{}, "post:ApiUpdateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
 			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
 		),

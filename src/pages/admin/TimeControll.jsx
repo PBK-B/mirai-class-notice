@@ -25,20 +25,20 @@ export default function TimeControll() {
     url: "/api/time/list",
   });
 
-  const [showCreateUser, setshowCreateUser] = useState(false);
-  const [createUserLoading, setcreateUserLoading] = useState(false);
-  const [createUser, setcreateUser] = useState({
+  // 创建时间点部分区域
+  const [showCreateTime, setshowCreateTime] = useState(false);
+  const [createTimeLoading, setcreateTimeLoading] = useState(false);
+  const [createTime, setcreateTime] = useState({
     group: "",
     start: "",
     end: "",
     remark: "",
   });
-
-  const onCreatUser = (value) => {
-    setcreateUser(value);
+  const onCreatTime = (value) => {
+    setcreateTime(value);
   };
-  const APICreatUser = () => {
-    const { group, start, end, remark } = createUser;
+  const APICreatTime = () => {
+    const { group, start, end, remark } = createTime;
 
     if (!group || !start || !end || !remark) {
       Notification.error({
@@ -47,10 +47,9 @@ export default function TimeControll() {
       return;
     }
 
-    setcreateUserLoading(true);
+    setcreateTimeLoading(true);
 
     const params = new URLSearchParams();
-    params.append("action", "createUser");
     params.append("group", group);
     params.append("start", start);
     params.append("end", end);
@@ -59,7 +58,7 @@ export default function TimeControll() {
     axios
       .post("/api/time/create", params, {})
       .then((res) => {
-        setcreateUserLoading(false);
+        setcreateTimeLoading(false);
 
         const { data } = res;
         const { code } = data;
@@ -76,8 +75,8 @@ export default function TimeControll() {
           });
 
           // 创建用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
-          setshowCreateUser(false);
-          setcreateUser({
+          setshowCreateTime(false);
+          setcreateTime({
             group: group,
             start: "",
             end: "",
@@ -90,11 +89,83 @@ export default function TimeControll() {
         Notification.error({
           title: "添加失败，" + error || "添加失败，请稍后重试！",
         });
-        setcreateUserLoading(false);
+        setcreateTimeLoading(false);
       });
   };
 
-  let users = [];
+  // 修改时间点部分区域
+  const [showUpdateTime, setshowUpdateTime] = useState(false);
+  const [updateTimeData, setupdateTimeData] = useState();
+  const updateTime = (time) => {
+    if (!time) {
+      Notification.error({
+        title: "修改时间异常！",
+      });
+      return;
+    }
+
+    setshowUpdateTime(true);
+    setupdateTimeData(time);
+  };
+  const onUpdateTime = (value) => {
+    const newData = { ...updateTimeData, ...value };
+    setupdateTimeData(newData);
+  };
+  const [updateTimeLoading, setupdateTimeLoading] = useState(false);
+  const APIUpdateTime = (time) => {
+    const { id, group, start, end, remark } = time;
+
+    if (!group || !start || !end || !remark) {
+      Notification.error({
+        title: "时间信息需填写完整",
+      });
+      return;
+    }
+
+    setupdateTimeLoading(true);
+
+    const params = new URLSearchParams();
+    params.append("id", id);
+    params.append("group", group);
+    params.append("start", start);
+    params.append("end", end);
+    params.append("remark", remark);
+
+    axios
+      .post("/api/time/update", params, {})
+      .then((res) => {
+        setupdateTimeLoading(false);
+
+        const { data } = res;
+        const { code } = data;
+
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改时间 ${user.remark} 成功！`,
+          });
+
+          // 创建用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
+          setshowUpdateTime(false);
+          setupdateTimeData(null);
+          refetch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setupdateTimeLoading(false);
+      });
+  };
+
+  // 表格数据处理部分代码
+  let times = [];
 
   if (data) {
     let { data: data_array } = data;
@@ -105,7 +176,7 @@ export default function TimeControll() {
         time: new Date().toUTCString(),
       };
     });
-    users = data_array;
+    times = data_array;
   }
 
   if (loading) return <Loader backdrop content="loading..." vertical />;
@@ -117,7 +188,7 @@ export default function TimeControll() {
 
       <FlexboxGrid style={{ marginBottom: 15 }} justify="end">
         <FlexboxGrid.Item>
-          <Button appearance="ghost" onClick={() => setshowCreateUser(true)}>
+          <Button appearance="ghost" onClick={() => setshowCreateTime(true)}>
             添加时间
           </Button>
         </FlexboxGrid.Item>
@@ -126,7 +197,7 @@ export default function TimeControll() {
       <Panel bordered bodyFill>
         <Table
           autoHeight
-          data={users}
+          data={times}
           onRowClick={(data) => {
             console.log(data);
           }}
@@ -161,12 +232,20 @@ export default function TimeControll() {
 
             <Cell>
               {(rowData) => {
-                function handleAction() {
-                  alert(`id:${rowData.id}`);
+                function editTimeAction(e) {
+                  // alert(`id:${rowData.id}`);
+                  updateTime({
+                    id: rowData.id,
+                    group: rowData.group,
+                    start: rowData.start,
+                    end: rowData.end,
+                    remark: rowData.remark,
+                  });
+                  e.stopPropagation();
                 }
                 return (
                   <span>
-                    <a onClick={handleAction}> 编辑 </a>
+                    <a onClick={(e) => editTimeAction(e)}> 编辑 </a>
                   </span>
                 );
               }}
@@ -176,9 +255,9 @@ export default function TimeControll() {
       </Panel>
 
       <Modal
-        show={showCreateUser}
+        show={showCreateTime}
         onHide={() => {
-          setshowCreateUser(false);
+          setshowCreateTime(false);
         }}
         backdrop="static"
       >
@@ -186,7 +265,7 @@ export default function TimeControll() {
           <Modal.Title>添加上课时间</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form fluid onChange={onCreatUser} formValue={createUser}>
+          <Form fluid onChange={onCreatTime} formValue={createTime}>
             <FormGroup>
               <ControlLabel>分类：</ControlLabel>
               <FormControl name="group" />
@@ -210,12 +289,58 @@ export default function TimeControll() {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={APICreatUser}
+            onClick={APICreatTime}
             style={{ color: "#FFF" }}
             appearance="primary"
-            loading={createUserLoading}
+            loading={createTimeLoading}
           >
             添加时间
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showUpdateTime}
+        onHide={() => {
+          setshowUpdateTime(false);
+          setupdateTimeData(null);
+        }}
+        backdrop="static"
+      >
+        <Modal.Header>
+          <Modal.Title>修改上课时间</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form fluid onChange={onUpdateTime} formValue={updateTimeData}>
+            <FormGroup>
+              <ControlLabel>分类：</ControlLabel>
+              <FormControl name="group" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>上课时间：</ControlLabel>
+              <FormControl name="start" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>下课时间：</ControlLabel>
+              <FormControl name="end" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>备注：</ControlLabel>
+              <FormControl name="remark" />
+            </FormGroup>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => APIUpdateTime(updateTimeData)}
+            style={{ color: "#FFF" }}
+            appearance="primary"
+            loading={updateTimeLoading}
+          >
+            修改时间
           </Button>
         </Modal.Footer>
       </Modal>
