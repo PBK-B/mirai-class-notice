@@ -137,7 +137,12 @@ func (c *TimesController) ApiTimeList() {
 }
 
 func (c *TimesController) ApiTimeGroupList() {
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
 	groups := models.GetAllTimesGroups()
+
 	callBackResult(&c.Controller, 200, "", groups)
 	c.Finish()
 }
@@ -148,4 +153,16 @@ func (c *TimesController) ApiTimeTest() {
 	models.PushTimeAllCourses(1)
 	callBackResult(&c.Controller, 200, "", nil)
 	c.Finish()
+}
+
+func (c *TimesController) ApiTimeRerunTasks() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	// 重置全部时间任务
+	models.TimesRunAllTask()
+
+	callBackResult(&c.Controller, 200, "", map[string]interface{}{})
+	c.Finish()
+
 }

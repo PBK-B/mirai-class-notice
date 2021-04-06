@@ -32,6 +32,7 @@ func init() {
 			web.NSRouter("/update", &apis.TimesController{}, "post:ApiUpdateTime"),
 			web.NSRouter("/list", &apis.TimesController{}, "get:ApiTimeList"),
 			web.NSRouter("/groups", &apis.TimesController{}, "get:ApiTimeGroupList"),
+			web.NSRouter("/reruntasks", &apis.TimesController{}, "get:ApiTimeRerunTasks"),
 		),
 
 		// 课表相关 API

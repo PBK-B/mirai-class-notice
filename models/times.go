@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -223,7 +224,7 @@ func TimesRunAllTask() {
 
 				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
 				tk := task.NewTask(time.Remarks, ts, func(ctx context.Context) error {
-					fmt.Println("执行了 ", time.Remarks)
+					log.Println("执行了 ", time.Remarks)
 					PushTimeAllCourses(time.Id) // 通知筛选课程
 					return nil
 				})
@@ -237,4 +238,5 @@ func TimesRunAllTask() {
 	}
 
 	task.StartTask() // 启动全局任务
+	log.Println("【models.Time】注册全部上课时间定时任务成功！")
 }

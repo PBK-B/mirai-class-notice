@@ -64,6 +64,5 @@ func init() {
 
 	// 注册全部上课时间定时任务
 	TimesRunAllTask()
-	fmt.Println(tag + "注册全部上课时间定时任务成功！")
 
 }

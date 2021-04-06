@@ -193,6 +193,34 @@ export default function TimeControll() {
     settimes(newArray);
   };
 
+  // 重新注册上课时间系统定时任务
+  const APIrerunTimeTasks = () => {
+    axios
+      .get("/api/time/reruntasks")
+      .then(function (response) {
+        const { data } = response;
+        const { code } = data;
+
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || "定时任务重置失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+          Notification.success({
+            title: "全部上课时间定时任务重置成功！",
+          });
+        }
+      })
+      .catch(function (error) {
+        Notification.error({
+          title: error
+            ? "定时任务重置失败，" + error
+            : "定时任务重置，请稍后重试！",
+        });
+      });
+  };
+
   if (loading) return <Loader backdrop content="loading..." vertical />;
 
   return (
@@ -202,6 +230,13 @@ export default function TimeControll() {
 
       <FlexboxGrid style={{ marginBottom: 15 }} justify="end">
         <FlexboxGrid.Item>
+          <Button
+            appearance="primary"
+            style={{ marginRight: 15, color: "#FFF" }}
+            onClick={APIrerunTimeTasks}
+          >
+            重置定时
+          </Button>
           <Button appearance="ghost" onClick={() => setshowCreateTime(true)}>
             添加时间
           </Button>
