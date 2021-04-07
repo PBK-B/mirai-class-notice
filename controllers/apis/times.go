@@ -150,7 +150,12 @@ func (c *TimesController) ApiTimeGroupList() {
 func (c *TimesController) ApiTimeTest() {
 	// fmt.Println("-------------- Hello Test 001 --------------")
 	// helper.InitBot()
-	models.PushTimeAllCourses(1)
+	param, _ := c.GetInt("p", 1)
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	models.PushTimeAllCourses(param)
 	callBackResult(&c.Controller, 200, "", nil)
 	c.Finish()
 }

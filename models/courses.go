@@ -195,14 +195,14 @@ func GenerateNoticeString(course Courses) string {
 func PushTimeAllCourses(timeId int) {
 	// t_week := int(time.Now().Weekday())
 
-	log.Panicln("[ 触发通知课程 ] ", timeId)
+	log.Println("[ 触发通知课程 ] ", timeId)
 
 	bot_group_code := int64(0)
 
 	botConfig, botConfigErr := GetConfigsDataByName("bot")
 	systemConfig, systemConfigErr := GetConfigsDataByName("system")
 	if botConfigErr != nil || botConfig == nil {
-		log.Panicln("机器人未配置！")
+		log.Println("机器人未配置！")
 		return
 	}
 
@@ -249,7 +249,7 @@ func PushTimeAllCourses(timeId int) {
 					// 是这周且是今天的课
 					msg := GenerateNoticeString(course)
 					helper.SendGroupMessage(bot_group_code, msg)
-					log.Panicln("[ 发送课程通知 ] ", bot_group_code, "  ", msg)
+					log.Println("[ 发送课程通知 ] ", bot_group_code, "  ", msg)
 					break
 				}
 			}

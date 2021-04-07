@@ -66,13 +66,13 @@ func InitBot(account int64, password string) error {
 
 				// for text == "" {
 				// 	// text, _ = console.ReadString('\n')
-				// 	log.Panicln("待输入验证码")
+				// 	log.Println("待输入验证码")
 				// 	if text != "" {
-				// 		log.Panicln("输入的验证码：" + text)
+				// 		log.Println("输入的验证码：" + text)
 				// 		break
 				// 	}
 				// }
-				// log.Panicln("输入的验证码：" + text)
+				// log.Println("输入的验证码：" + text)
 				// resp, err = bot.Instance.SubmitCaptcha(strings.ReplaceAll(text, "\n", ""), resp.CaptchaSign)
 
 				return errors.New("bot login: 登陆需要验证码")
@@ -97,7 +97,7 @@ func InitBot(account int64, password string) error {
 				}
 				if !bot.Instance.RequestSMS() {
 					// logger.Warnf("unable to request SMS Code")
-					log.Panicln("unable to request SMS Code")
+					log.Println("unable to request SMS Code")
 					// os.Exit(2)
 				}
 				// logger.Warn("please input SMS Code: ")
