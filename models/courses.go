@@ -195,7 +195,7 @@ func GenerateNoticeString(course Courses) string {
 func PushTimeAllCourses(timeId int) {
 	// t_week := int(time.Now().Weekday())
 
-	log.Println("[ 触发通知课程 ] ", timeId)
+	log.Println("[ 触发通知课程，时间 ID ] ", timeId)
 
 	bot_group_code := int64(0)
 
@@ -250,7 +250,7 @@ func PushTimeAllCourses(timeId int) {
 					msg := GenerateNoticeString(course)
 					helper.SendGroupMessage(bot_group_code, msg)
 					log.Println("[ 发送课程通知 ] ", bot_group_code, "  ", msg)
-					break
+					continue
 				}
 			}
 		}

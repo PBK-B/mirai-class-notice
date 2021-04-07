@@ -201,13 +201,13 @@ func TimesRunAllTask() {
 	task.ClearTask() // 清理全部全局任务
 
 	ls, _ := GetAllTimes(nil, nil, nil, nil, 0, -1)
-	for _, time := range ls {
+	for index, time := range ls {
 		startStr := time.Start
 		s := strings.Split(startStr, ":")
 
 		if len(s) < 2 {
 			// 时间不合法
-			break
+			continue
 		}
 
 		if s[0] != "" && s[1] != "" {
@@ -220,15 +220,21 @@ func TimesRunAllTask() {
 				// 时间合法
 				// TODO: 这里需要加上一个提前一个设定的时间
 				h = h - 1
+				if h < 0 {
+					// FIX 修复凌晨 0 点减去一个小时后导致变成负数
+					h = 23
+				}
 				// 现在先默认提前一个小时通知
 
 				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
-				tk := task.NewTask(time.Remarks, ts, func(ctx context.Context) error {
-					log.Println("执行了 ", time.Remarks)
-					PushTimeAllCourses(time.Id) // 通知筛选课程
+				new_time := ls[index]
+				taskName := new_time.Remarks + fmt.Sprint(new_time.Id)
+				tk := task.NewTask(taskName, ts, func(ctx context.Context) error {
+					log.Println("执行了 ", new_time.Remarks)
+					PushTimeAllCourses(new_time.Id) // 通知筛选课程
 					return nil
 				})
-				task.AddTask(time.Remarks, tk) // 将任务添加到全局任务
+				task.AddTask(taskName, tk) // 将任务添加到全局任务
 			}
 
 			task.StartTask()
