@@ -156,7 +156,7 @@ func (c *TimesController) ApiTimeTest() {
 	userAssistant(&c.Controller)
 
 	models.PushTimeAllCourses(param)
-	callBackResult(&c.Controller, 200, "", nil)
+	callBackResult(&c.Controller, 200, "", map[string]interface{}{})
 	c.Finish()
 }
 

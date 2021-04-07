@@ -206,7 +206,6 @@ export default function TimeControll() {
             title: data?.msg || "定时任务重置失败，请稍后重试！",
           });
         } else {
-          const user = data?.data;
           Notification.success({
             title: "全部上课时间定时任务重置成功！",
           });
@@ -216,7 +215,34 @@ export default function TimeControll() {
         Notification.error({
           title: error
             ? "定时任务重置失败，" + error
-            : "定时任务重置，请稍后重试！",
+            : "定时任务重置失败，请稍后重试！",
+        });
+      });
+  };
+
+  // 手动触发上课通知
+  const APInoticeTime = (id) => {
+    axios
+      .get("/api/time/test01?p=" + id)
+      .then(function (response) {
+        const { data } = response;
+        const { code } = data;
+
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || "手动触发上课通知失败，请稍后重试！",
+          });
+        } else {
+          Notification.success({
+            title: "手动触发上课通知成功！",
+          });
+        }
+      })
+      .catch(function (error) {
+        Notification.error({
+          title: error
+            ? "手动触发上课通知失败，" + error
+            : "手动触发上课通知失败，请稍后重试！",
         });
       });
   };
@@ -292,9 +318,16 @@ export default function TimeControll() {
                   });
                   e.stopPropagation();
                 }
+
+                function noticeTime(e) {
+                  APInoticeTime(rowData.id);
+                  e.stopPropagation();
+                }
+
                 return (
                   <span>
-                    <a onClick={(e) => editTimeAction(e)}> 编辑 </a>
+                    <a onClick={editTimeAction}> 编辑 </a> |
+                    <a onClick={noticeTime}> 通知 </a>
                   </span>
                 );
               }}
