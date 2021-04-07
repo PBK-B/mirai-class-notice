@@ -23,6 +23,7 @@ func init() {
 			// 获取用户信息
 			web.NSRouter("/me", &apis.UsersController{}, "get:ApiGetMe"),
 			web.NSRouter("/create", &apis.UsersController{}, "post:ApiCreateUser"),
+			web.NSRouter("/upstatus", &apis.UsersController{}, "post:ApiUpStatusUser"),
 			web.NSRouter("/list", &apis.UsersController{}, "get:ApiUserList"),
 		),
 

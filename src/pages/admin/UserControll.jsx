@@ -99,6 +99,42 @@ export default function UserControll() {
     users = data_array;
   }
 
+  // 禁用用户
+  const APIDisableUser = (id, isDisable) => {
+    const msgStrTitle = isDisable ? "禁用" : "启用";
+    const params = new URLSearchParams();
+    params.append("id", id);
+
+    axios
+      .post("/api/user/upstatus", params, {})
+      .then((res) => {
+        const { data } = res;
+        const { code } = data;
+
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || msgStrTitle + "失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `${msgStrTitle}用户 ${user.name} 成功！`,
+          });
+
+          // 禁用用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
+          refetch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title:
+            msgStrTitle + "失败，" + error ||
+            msgStrTitle + "失败，请稍后重试！",
+        });
+      });
+  };
+
   if (loading) return <Loader backdrop content="loading..." vertical />;
 
   return (
@@ -147,13 +183,23 @@ export default function UserControll() {
 
             <Cell>
               {(rowData) => {
-                function handleAction() {
+                function handleAction(e) {
                   alert(`id:${rowData.id}`);
+
+                  // 结束事件分发
+                  e.stopPropagation();
                 }
+
+                function disableAction(e) {
+                  // 结束事件分发
+                  e.stopPropagation();
+                  APIDisableUser(rowData.id, rowData.status === "启用");
+                }
+
                 return (
                   <span>
                     <a onClick={handleAction}> 编辑 </a> |
-                    <a onClick={handleAction}> 禁用 </a>
+                    <a onClick={disableAction}> {rowData.status === "启用" ? "禁用" : "启用"} </a>
                   </span>
                 );
               }}

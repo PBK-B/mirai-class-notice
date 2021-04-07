@@ -2,6 +2,7 @@ package models
 
 import (
 	helper "class_notice/helper"
+	"fmt"
 
 	"github.com/beego/beego/v2/client/orm"
 )
@@ -43,6 +44,21 @@ func AddUsers(m *Users) (user Users, err error) {
 		Name:   m.Name,
 		Token:  m.Token,
 		Status: m.Status,
+	}
+	return
+}
+
+// UpdateUsers updates Users by Id and returns error if
+// the record to be updated doesn't exist
+func UpdateUsersById(m *Users) (err error) {
+	o := orm.NewOrm()
+	v := Users{Id: m.Id}
+	// ascertain id exists in the database
+	if err = o.Read(&v); err == nil {
+		var num int64
+		if num, err = o.Update(m); err == nil {
+			fmt.Println("Number of records updated in database:", num)
+		}
 	}
 	return
 }

@@ -97,6 +97,53 @@ func (c *UsersController) ApiCreateUser() {
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }
 
+func (c *UsersController) ApiUpStatusUser() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	u_id, _ := c.GetInt("id", 0)
+
+	if u_id == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	user, err := models.GetUserById(u_id)
+
+	if user == nil || err != nil {
+		callBackResult(&c.Controller, 200, "用户不存在", nil)
+		c.Finish()
+		return
+	}
+
+	if user.Status == 1 {
+		// 禁用用户
+		user.Status = 0
+		err = models.UpdateUsersById(user)
+	} else {
+		// 启用用户
+		user.Status = 1
+		err = models.UpdateUsersById(user)
+	}
+
+	if err != nil {
+		callBackResult(&c.Controller, 200, "出错啦，"+err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"id":    user.Id,
+		"name":  user.Name,
+		"token": user.Token,
+	}
+
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
+	c.Finish()
+
+}
+
 // 获取用户列表接口
 func (c *UsersController) ApiUserList() {
 	// 要求登陆助理函数
