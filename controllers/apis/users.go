@@ -109,6 +109,13 @@ func (c *UsersController) ApiUpStatusUser() {
 		return
 	}
 
+	// 防止全部用户被禁用状态导致系统进入假锁死
+	if u_id == 1 {
+		callBackResult(&c.Controller, 200, "默认 admin 用户不能禁用！", nil)
+		c.Finish()
+		return
+	}
+
 	user, err := models.GetUserById(u_id)
 
 	if user == nil || err != nil {
@@ -141,7 +148,46 @@ func (c *UsersController) ApiUpStatusUser() {
 
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
 	c.Finish()
+}
 
+func (c *UsersController) ApiUpdateUser() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	u_id, _ := c.GetInt("id", 0)
+	u_password := c.GetString("password")
+
+	if u_id == 0 || u_password == "" {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	user, err := models.GetUserById(u_id)
+
+	if user == nil || err != nil {
+		callBackResult(&c.Controller, 200, "用户不存在", nil)
+		c.Finish()
+		return
+	}
+
+	// TODO: Bin BY 这里应该还可以做判断用户名和密码是否合法
+	user.Password = helper.StringToMd5(u_password)
+
+	if err != nil {
+		callBackResult(&c.Controller, 200, "出错啦，"+err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = map[string]interface{}{
+		"id":    user.Id,
+		"name":  user.Name,
+		"token": user.Token,
+	}
+
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
+	c.Finish()
 }
 
 // 获取用户列表接口

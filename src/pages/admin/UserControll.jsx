@@ -25,17 +25,17 @@ export default function UserControll() {
     url: "/api/user/list",
   });
 
+  // 创建用户操作
   const [showCreateUser, setshowCreateUser] = useState(false);
   const [createUserLoading, setcreateUserLoading] = useState(false);
   const [createUser, setcreateUser] = useState({
     name: "",
     passwd: "",
   });
-
-  const onCreatUser = (value) => {
+  const onCreateUser = (value) => {
     setcreateUser(value);
   };
-  const APICreatUser = () => {
+  const APICreateUser = () => {
     const { name, passwd } = createUser;
 
     if (!name || !passwd) {
@@ -85,6 +85,65 @@ export default function UserControll() {
       });
   };
 
+  // 修改用户密码操作
+  const [showUpdateUser, setshowUpdateUser] = useState(false);
+  const [updateUserLoading, setupdateUserLoading] = useState(false);
+  const [updateUser, setupdateUser] = useState({
+    id: 0,
+    name: "",
+    passwd: "",
+  });
+  const onUpdateUser = (value) => {
+    setupdateUser({ ...updateUser, ...value });
+  };
+  const APIUpdateUser = (id, passwd) => {
+    if (!id || !passwd) {
+      Notification.error({
+        title: "新密码不得为空！",
+      });
+      return;
+    }
+
+    setupdateUserLoading(true);
+
+    const params = new URLSearchParams();
+    params.append("id", id);
+    params.append("password", passwd);
+
+    axios
+      .post("/api/user/update", params, {})
+      .then((res) => {
+        setupdateUserLoading(false);
+
+        const { data } = res;
+        const { code } = data;
+
+        if (code < 1) {
+          Notification.error({
+            title: data?.msg || "修改失败，请稍后重试！",
+          });
+        } else {
+          const user = data?.data;
+
+          Notification.success({
+            title: `修改用户 ${user.name} 成功！`,
+          });
+
+          // 修改用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
+          setshowUpdateUser(false);
+          setcreateUser({ id: 0, name: "", passwd: "" });
+          refetch();
+        }
+      })
+      .catch((error) => {
+        Notification.error({
+          title: "修改失败，" + error || "修改失败，请稍后重试！",
+        });
+        setupdateUserLoading(false);
+      });
+  };
+
+  // 用户列表数据处理
   let users = [];
 
   if (data) {
@@ -183,8 +242,13 @@ export default function UserControll() {
 
             <Cell>
               {(rowData) => {
-                function handleAction(e) {
-                  alert(`id:${rowData.id}`);
+                function editAction(e) {
+                  setupdateUser({
+                    id: rowData.id,
+                    name: rowData.name,
+                    passwd: "",
+                  });
+                  setshowUpdateUser(true);
 
                   // 结束事件分发
                   e.stopPropagation();
@@ -198,8 +262,10 @@ export default function UserControll() {
 
                 return (
                   <span>
-                    <a onClick={handleAction}> 编辑 </a> |
-                    <a onClick={disableAction}> {rowData.status === "启用" ? "禁用" : "启用"} </a>
+                    <a onClick={editAction}> 编辑 </a> |
+                    <a onClick={disableAction}>
+                      {rowData.status === "启用" ? " 禁用 " : " 启用 "}
+                    </a>
                   </span>
                 );
               }}
@@ -219,7 +285,7 @@ export default function UserControll() {
           <Modal.Title>创建用户</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form fluid onChange={onCreatUser} formValue={createUser}>
+          <Form fluid onChange={onCreateUser} formValue={createUser}>
             <FormGroup>
               <ControlLabel>账号：</ControlLabel>
               <FormControl name="name" />
@@ -233,12 +299,47 @@ export default function UserControll() {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={APICreatUser}
+            onClick={APICreateUser}
             style={{ color: "#FFF" }}
             appearance="primary"
             loading={createUserLoading}
           >
             创建账号
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showUpdateUser}
+        onHide={() => {
+          setshowUpdateUser(false);
+        }}
+        backdrop="static"
+      >
+        <Modal.Header>
+          <Modal.Title>修改用户密码</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form fluid onChange={onUpdateUser} formValue={updateUser}>
+            <FormGroup>
+              <ControlLabel>账号：</ControlLabel>
+              <FormControl name="name" disabled="true" />
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>密码：</ControlLabel>
+              <FormControl name="passwd" />
+            </FormGroup>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => APIUpdateUser(updateUser.id, updateUser.passwd)}
+            style={{ color: "#FFF" }}
+            appearance="primary"
+            loading={updateUserLoading}
+          >
+            修改密码
           </Button>
         </Modal.Footer>
       </Modal>

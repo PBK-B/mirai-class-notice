@@ -24,6 +24,7 @@ func init() {
 			web.NSRouter("/me", &apis.UsersController{}, "get:ApiGetMe"),
 			web.NSRouter("/create", &apis.UsersController{}, "post:ApiCreateUser"),
 			web.NSRouter("/upstatus", &apis.UsersController{}, "post:ApiUpStatusUser"),
+			web.NSRouter("/update", &apis.UsersController{}, "post:ApiUpdateUser"),
 			web.NSRouter("/list", &apis.UsersController{}, "get:ApiUserList"),
 		),
 
