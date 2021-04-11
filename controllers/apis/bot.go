@@ -117,7 +117,7 @@ func (c *BotController) ApiBotGetInfo() {
 			callBackResult(&c.Controller, 200, "", c.Data["json"])
 			c.Finish()
 		} else {
-			callBackResult(&c.Controller, 403, "bot 未登陆", nil)
+			callBackResult(&c.Controller, 200, "bot 未登陆", nil)
 			c.Finish()
 		}
 		return

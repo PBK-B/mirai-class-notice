@@ -327,7 +327,7 @@ export default function SystemSetup() {
       });
   };
 
-  return systemInfo && botInfo ? (
+  return systemInfo ? (
     <div className="page-system" style={{ marginTop: 25, marginBottom: 25 }}>
       <div style={{ marginBottom: 30 }}>通知系统设置页面</div>
       <div className="list-view">
