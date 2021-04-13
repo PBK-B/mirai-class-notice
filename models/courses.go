@@ -173,16 +173,17 @@ func CoursesToMap(course Courses) map[string]interface{} {
 	cycle_obj := _cycle_obj.([]interface{})
 
 	return map[string]interface{}{
-		"id":           course.Id,
-		"title":        course.Title,
-		"status":       course.Status,
-		"classroom":    course.Classroom,
-		"classroom_id": course.ClassroomId,
-		"teacher":      course.Teacher,
-		"remark":       course.Remarks,
-		"week_time":    course.WeekTime,
-		"cycle":        cycle_obj,
-		"time":         TimesToMap(*course.Times),
+		"id":            course.Id,
+		"title":         course.Title,
+		"status":        course.Status,
+		"classroom":     course.Classroom,
+		"classroom_id":  course.ClassroomId,
+		"teacher":       course.Teacher,
+		"remark":        course.Remarks,
+		"week_time":     course.WeekTime,
+		"lesson_serial": course.LessonSerial,
+		"cycle":         cycle_obj,
+		"time":          TimesToMap(*course.Times),
 	}
 }
 

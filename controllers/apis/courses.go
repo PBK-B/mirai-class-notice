@@ -98,6 +98,97 @@ func (c *CoursesController) ApiCreateCourses() {
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }
 
+// 修改一个课程数据
+func (c *CoursesController) ApiUpdateCourses() {
+
+	c_id, _ := c.GetInt("id")                       // 课程 id
+	c_time_id, _ := c.GetInt("time_id")             // 绑定时间 id
+	c_title := c.GetString("title")                 // 标题
+	c_classroom := c.GetString("classroom")         // 教室
+	c_classroom_id := c.GetString("classroom_id")   // 教室 id
+	c_teacher := c.GetString("teacher")             // 教师名字
+	c_remarks := c.GetString("remarks")             // 备注
+	c_week_time, _ := c.GetInt("week_time")         // 星期几
+	c_lesson_serial, _ := c.GetInt("lesson_serial") // 第几节课
+	c_cycle := c.GetString("cycle")                 // 哪些周需要上课
+
+	is_c_cycle := json.Valid([]byte(c_cycle)) // 判断获取到的数据是否为 json
+
+	// 获取 body 数组数据
+	// var c_cycle []string // 哪些周需要上课
+	// c.Ctx.Input.Bind(&c_cycle, "cycle")
+
+	if c_id == 0 ||
+		c_time_id == 0 ||
+		c_title == "" ||
+		c_classroom == "" ||
+		c_classroom_id == "" ||
+		c_teacher == "" ||
+		c_remarks == "" ||
+		c_week_time == 0 ||
+		c_lesson_serial == 0 ||
+		!is_c_cycle {
+		callBackResult(&c.Controller, 501, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	// 解码 json
+	// var test interface{}
+	// json.Unmarshal([]byte("{ \"week_time\": 1, \"lesson_id\": \"Hello\", \"cycle\": { \"a\": 111 }, \"list\": [1,2,3] }"), &test)
+	// test_obj := test.(map[string]interface{})
+	// fmt.Println(test_obj["cycle"].(map[string]interface{})["a"])
+
+	// 编码 json
+	// b, err := json.Marshal(test_obj)
+	// if err == nil {
+	// 	log.Println(string(b))
+	// }
+
+	time, err_time := models.GetTimesById(c_time_id)
+
+	if err_time != nil || time == nil {
+		callBackResult(&c.Controller, 501, "上课时间 ID 异常", nil)
+		c.Finish()
+		return
+	}
+	is_course, is_course_err := models.GetCoursesById(c_id)
+
+	if is_course == nil || is_course_err != nil {
+		callBackResult(&c.Controller, 200, "该课程不存在或课程数据异常！", nil)
+		c.Finish()
+		return
+	}
+
+	course := &models.Courses{
+		Id:           c_id,
+		Title:        c_title,
+		Status:       is_course.Status,
+		Classroom:    c_classroom,
+		ClassroomId:  c_classroom_id,
+		Teacher:      c_teacher,
+		Remarks:      c_remarks,
+		WeekTime:     c_week_time,
+		LessonSerial: c_lesson_serial,
+		Cycle:        c_cycle,
+		Times:        time,
+	}
+
+	err := models.UpdateCoursesById(course)
+
+	if err != nil {
+		callBackResult(&c.Controller, 403, "修改课程失败"+err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = models.CoursesToMap(*course)
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
+}
+
 // 获取全部上课时间
 func (c *CoursesController) ApiCoursesList() {
 
@@ -124,4 +215,42 @@ func (c *CoursesController) ApiCoursesList() {
 
 	callBackResult(&c.Controller, 200, "", new_courses)
 	c.Finish()
+}
+
+// 获取一个课程数据
+func (c *CoursesController) ApiGetCourses() {
+
+	c_id, _ := c.GetInt("id") // 课程 id
+
+	if c_id == 0 {
+		callBackResult(&c.Controller, 501, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	// 解码 json
+	// var test interface{}
+	// json.Unmarshal([]byte("{ \"week_time\": 1, \"lesson_id\": \"Hello\", \"cycle\": { \"a\": 111 }, \"list\": [1,2,3] }"), &test)
+	// test_obj := test.(map[string]interface{})
+	// fmt.Println(test_obj["cycle"].(map[string]interface{})["a"])
+
+	// 编码 json
+	// b, err := json.Marshal(test_obj)
+	// if err == nil {
+	// 	log.Println(string(b))
+	// }
+
+	course, err := models.GetCoursesById(c_id)
+
+	if err != nil || course == nil {
+		callBackResult(&c.Controller, 501, "课程不存在或数据异常！", nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = models.CoursesToMap(*course)
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }

@@ -41,7 +41,9 @@ func init() {
 		// 课表相关 API
 		web.NSNamespace("/course",
 			web.NSRouter("/create", &apis.CoursesController{}, "post:ApiCreateCourses"),
+			web.NSRouter("/update", &apis.CoursesController{}, "post:ApiUpdateCourses"),
 			web.NSRouter("/list", &apis.CoursesController{}, "get:ApiCoursesList"),
+			web.NSRouter("/get", &apis.CoursesController{}, "get:ApiGetCourses"),
 		),
 
 		// 系统相关 API
