@@ -2,9 +2,9 @@ import React from 'react';
 import useAxios from 'axios-hooks';
 import axios from 'axios';
 
-import { Table, Panel, Loader, FlexboxGrid, Button, Alert, Tag, Pagination } from 'rsuite';
+import { Table, Panel, Loader, FlexboxGrid, Button, Alert, Tag, Pagination, Modal, Notification } from 'rsuite';
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 const { Column, HeaderCell, Cell } = Table;
 
 export default function CourseList(props) {
@@ -16,6 +16,92 @@ export default function CourseList(props) {
     const [{ data, loading, error }, refetch] = useAxios({
         url: '/api/course/list?count=999',
     });
+
+    // 禁用课程
+    const APIDisableCourse = (id, isDisable) => {
+        const msgStrTitle = isDisable ? '禁用' : '启用';
+
+        if (!id) {
+            Notification.error({
+                title: msgStrTitle + '失败，课程数据异常！',
+            });
+            return;
+        }
+
+        const params = new URLSearchParams();
+        params.append('id', id);
+
+        axios
+            .post('/api/course/upstatus', params, {})
+            .then((res) => {
+                const { data } = res;
+                const { code } = data;
+
+                if (code < 1) {
+                    Notification.error({
+                        title: data?.msg || msgStrTitle + '失败，请稍后重试！',
+                    });
+                } else {
+                    const course = data?.data;
+
+                    Notification.success({
+                        title: `${msgStrTitle}课程通知 ${course.title} 成功！`,
+                    });
+
+                    // 禁用用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
+                    refetch();
+                }
+            })
+            .catch((error) => {
+                Notification.error({
+                    title: msgStrTitle + '失败，' + error || msgStrTitle + '失败，请稍后重试！',
+                });
+            });
+    };
+
+    // 删除课程
+    const [showDeleteModal, setshowDeleteModal] = useState(false);
+    const deleteCourseData = useRef();
+    const APIDeleteCourse = (id) => {
+        const msgStrTitle = '删除';
+
+        if (!id) {
+            Notification.error({
+                title: msgStrTitle + '失败，课程数据异常！',
+            });
+            return;
+        }
+
+        const params = new URLSearchParams();
+        params.append('id', id);
+
+        axios
+            .post('/api/course/delete', params, {})
+            .then((res) => {
+                const { data } = res;
+                const { code } = data;
+
+                if (code < 1) {
+                    Notification.error({
+                        title: data?.msg || msgStrTitle + '失败，请稍后重试！',
+                    });
+                } else {
+                    const course = data?.data;
+
+                    Notification.success({
+                        title: `${msgStrTitle}课程通知 ${course.title} 成功！`,
+                    });
+
+                    // 禁用用户成功，关闭弹窗，刷新列表数据，清空编辑框数据
+                    refetch();
+                }
+            })
+            .catch((error) => {
+                Notification.error({
+                    title: msgStrTitle + '失败，' + error || msgStrTitle + '失败，请稍后重试！',
+                });
+            });
+    };
 
     const [coursesList, setcoursesList] = useState([]);
     useEffect(() => {
@@ -133,10 +219,22 @@ export default function CourseList(props) {
                                     e.stopPropagation();
                                 }
 
+                                function onDisable(e) {
+                                    APIDisableCourse(rowData.id, rowData.status != 0 ? true : false);
+                                    e.stopPropagation();
+                                }
+
+                                function onDelete(e) {
+                                    deleteCourseData.current = { ...rowData };
+                                    setshowDeleteModal(true);
+                                    e.stopPropagation();
+                                }
+
                                 return (
                                     <span>
-                                        <a onClick={goToEdit}> 编辑 </a> |<a onClick={handleAction}> 删除 </a> |
-                                        <a onClick={handleAction}>{rowData.status != 0 ? ' 禁用 ' : ' 启用 '}</a>
+                                        <a onClick={goToEdit}> 编辑 </a> |
+                                        <a onClick={onDisable}>{rowData.status != 0 ? ' 禁用 ' : ' 启用 '}</a> |
+                                        <a onClick={onDelete}> 删除 </a>
                                     </span>
                                 );
                             }}
@@ -160,6 +258,42 @@ export default function CourseList(props) {
                     }}
                 ></Table.Pagination>
             </Panel>
+
+            <Modal
+                size="xs"
+                show={showDeleteModal}
+                onHide={() => {
+                    setshowDeleteModal(false);
+                }}
+            >
+                <Modal.Header>
+                    <Modal.Title>友情提示</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>你确定要删除该课程通知吗？删除后不可恢复！！！</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        onClick={() => {
+                            APIDeleteCourse(deleteCourseData.current?.id);
+                            setshowDeleteModal(false);
+                        }}
+                        color="red"
+                        style={{ color: '#FFF' }}
+                        appearance="primary"
+                    >
+                        确定删除
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setshowDeleteModal(false);
+                        }}
+                        appearance="subtle"
+                    >
+                        取消
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

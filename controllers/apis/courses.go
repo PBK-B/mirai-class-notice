@@ -189,6 +189,82 @@ func (c *CoursesController) ApiUpdateCourses() {
 	callBackResult(&c.Controller, 200, "", c.Data["json"])
 }
 
+// 禁用一个课程
+func (c *CoursesController) ApiUpStatusCourses() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	c_id, _ := c.GetInt("id", 0)
+
+	if c_id == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	courses, err := models.GetCoursesById(c_id)
+
+	if courses == nil || err != nil {
+		callBackResult(&c.Controller, 200, "课程不存在", nil)
+		c.Finish()
+		return
+	}
+
+	if courses.Status == 1 {
+		// 禁用用户
+		courses.Status = 0
+		err = models.UpdateCoursesById(courses)
+	} else {
+		// 启用用户
+		courses.Status = 1
+		err = models.UpdateCoursesById(courses)
+	}
+
+	if err != nil {
+		callBackResult(&c.Controller, 200, "出错啦，"+err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = models.CoursesToMap(*courses)
+
+	callBackResult(&c.Controller, 200, "", c.Data["json"])
+	c.Finish()
+}
+
+// 删除一个课程
+func (c *CoursesController) ApiDeleteCourses() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+
+	c_id, _ := c.GetInt("id", 0)
+
+	if c_id == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	courses, err := models.GetCoursesById(c_id)
+
+	if courses == nil || err != nil {
+		callBackResult(&c.Controller, 200, "课程不存在", nil)
+		c.Finish()
+		return
+	}
+
+	if err := models.DeleteCourses(c_id); err != nil {
+		callBackResult(&c.Controller, 200, "出错啦，"+err.Error(), nil)
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = models.CoursesToMap(*courses)
+
+	callBackResult(&c.Controller, 200, "删除课程成功", c.Data["json"])
+	c.Finish()
+}
+
 // 获取全部上课时间
 func (c *CoursesController) ApiCoursesList() {
 
