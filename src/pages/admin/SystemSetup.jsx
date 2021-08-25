@@ -518,7 +518,7 @@ export default function SystemSetup() {
                                     登陆账号
                                 </Button>
                             </FlexboxGrid>
-                            {botInfo?.group_list ? (
+                            {(botInfo?.group_list && botInfo?.group_list?.length > 1) ? (
                                 <>
                                     <FlexboxGrid style={{ marginTop: 70, marginBottom: 20 }} justify="end">
                                         <Col xs={6}>
