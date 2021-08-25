@@ -2,3 +2,4 @@ node_modules
 app.conf
 application.yaml
 logs/
+.DS_Store

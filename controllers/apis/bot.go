@@ -79,7 +79,29 @@ func (c *BotController) ApiBotReLogin() {
 			c.Finish()
 			return
 		} else {
-			go helper.InitBot(int64(b_account), b_password)
+			fmt.Printf("重新登陆： %s  \n", config)
+			// 初始化 Bot
+			bot.InitBot(int64(b_account), b_password)
+
+			// 初始化 Modules
+			bot.StartService()
+
+			// 使用协议
+			// 不同协议可能会有部分功能无法使用
+			// 在登陆前切换协议
+			bot.UseProtocol(bot.IPad)
+
+			resp, err := bot.Instance.Login()
+			// 登录
+			if err == nil && resp.Success {
+				// 刷新好友列表，群列表
+				bot.RefreshList()
+
+				// 将登陆成功的对象加入序列
+				// bot.Instances[account.Account] = bot.Instance
+
+				callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
+			}
 		}
 	} else {
 		callBackResult(&c.Controller, 200, "error: relogin error code -1", nil)
