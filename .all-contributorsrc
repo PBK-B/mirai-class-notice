@@ -1,0 +1,24 @@
+{
+  "projectName": "mirai-class-notice",
+  "projectOwner": "PBK-B",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 50,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "FW27623",
+      "name": "FangWei",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59783568?v=4",
+      "profile": "https://www.fw1028.top/",
+      "contributions": [
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
