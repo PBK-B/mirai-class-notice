@@ -1,11 +1,13 @@
 # mirai-class-notice
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![GitHub Repo stars](https://img.shields.io/badge/664649817-Join%20QQ%20Group-blue?style=flat-square&logo=tencentqq&logoColor=white)](https://jq.qq.com/?_wv=1027&k=rzlC4dys)
+![GitHub Repo stars](https://img.shields.io/github/stars/PBK-B/mirai-class-notice?style=social)
+
 
 > 🥳 这是一款基于 mirai 的班级 QQ 群课程通知机器人，拥有简单的 web 管理页面，尽量实现一键安装简易操作等功能。
-
+>
 > **最新版本：** v0.2 Beta
 
 ## 使用 🍗
@@ -36,7 +38,7 @@
 ## Contributors ✨
 
 > 感谢所以使用以及反馈和提出建议的小伙伴们。
-
+>
 > Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
