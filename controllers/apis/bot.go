@@ -4,9 +4,12 @@ import (
 	"class_notice/helper"
 	"class_notice/models"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strconv"
 
 	"github.com/Logiase/MiraiGo-Template/bot"
+	"github.com/Mrs4s/MiraiGo/client"
 	beego "github.com/beego/beego/v2/server/web"
 )
 
@@ -59,6 +62,66 @@ func (c *BotController) ApiBotLogin() {
 
 	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()
+}
+
+// 登陆机器人账号（重构）
+func (c *BotController) ApiLoginBot() {
+
+	userAssistant(&c.Controller) // 认证
+
+	b_account, _ := c.GetInt64("account")
+	b_password := c.GetString("password")
+
+	if b_account == 0 || b_password == "" {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		return
+	}
+
+	// 初始化 Bot
+	bot.InitBot(b_account, b_password)
+
+	// 初始化 Modules
+	bot.StartService()
+
+	// 使用协议
+	bot.UseProtocol(bot.IPad)
+
+	// 登录
+	resp, err := bot.Instance.Login()
+
+	for {
+		if err != nil {
+			// logger.WithError(err).Fatal("unable to login")
+			callBackResult(&c.Controller, 200, "QQ 账号登陆异常，"+err.Error(), nil)
+			c.Finish()
+			return
+		}
+
+		if !resp.Success {
+			// 登陆失败
+			c.Data["json"] = botCallBackToMap(resp)
+			callBackResult(&c.Controller, 200, "", c.Data["json"])
+			c.Finish()
+			return
+
+		} else {
+			// 刷新好友列表，群列表
+			bot.RefreshList()
+
+			// 返回数据
+			c.Data["json"] = map[string]interface{}{}
+			callBackResult(&c.Controller, 200, "QQ 账号登陆成功", c.Data["json"])
+			c.Finish()
+
+			// 刷新全部机器人账号信息
+			RefreshBotInfo()
+			return
+		}
+	}
+}
+
+func RefreshBotInfo() {
+
 }
 
 func (c *BotController) ApiBotReLogin() {
@@ -128,20 +191,8 @@ func (c *BotController) ApiBotGetInfo() {
 	// 判断账号是否登陆
 	info := bot.Instance
 	if info == nil {
-		if err == nil && config != nil {
-			config["on_line"] = false
-
-			if bot_c_err == nil && bot_c != nil {
-				config["group_code"] = bot_c["group_code"]
-			}
-
-			c.Data["json"] = config
-			callBackResult(&c.Controller, 200, "", c.Data["json"])
-			c.Finish()
-		} else {
-			callBackResult(&c.Controller, 200, "bot 未登陆", nil)
-			c.Finish()
-		}
+		callBackResult(&c.Controller, 200, "bot 未登陆", nil)
+		c.Finish()
 		return
 	}
 
@@ -170,7 +221,7 @@ func (c *BotController) ApiBotGetInfo() {
 
 	// 更新缓存数据
 	if err == nil && config != nil {
-		models.UpdateConfigByData("bot_info", botInfo)
+		// models.UpdateConfigByData("bot_info", botInfo)
 	} else {
 		models.AddConfigByData("bot_info", botInfo)
 	}
@@ -252,4 +303,117 @@ func (c *BotController) ApiBotSubmitCaptcha() {
 
 	callBackResult(&c.Controller, 200, "ok", map[string]interface{}{})
 	c.Finish()
+}
+
+// 认证机器人账号登陆滑块
+func (c *BotController) ApiBotVerifyTicket() {
+	userAssistant(&c.Controller) // 认证
+
+	u_ticket := c.GetString("ticket")
+
+	if u_ticket == "" {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	if bot.Instance == nil {
+		callBackResult(&c.Controller, 200, "没有待认证的账号", nil)
+		c.Finish()
+		return
+	}
+
+	resp, err := bot.Instance.SubmitTicket(u_ticket)
+
+	if !resp.Success || err != nil {
+
+		if err != nil {
+			callBackResult(&c.Controller, 200, "登陆出错，"+err.Error(), nil)
+		} else {
+			c.Data["json"] = botCallBackToMap(resp)
+			callBackResult(&c.Controller, 200, "登陆出错，"+resp.ErrorMessage, c.Data["json"])
+		}
+
+		c.Finish()
+		return
+	}
+
+	c.Data["json"] = ""
+	callBackResult(&c.Controller, 200, "成功。", c.Data["json"])
+	c.Finish()
+}
+
+// 转换登陆结果为 map 数据
+func botCallBackToMap(resp *client.LoginResponse) map[string]interface{} {
+	switch resp.Error {
+
+	case client.NeedCaptcha:
+
+		err := ioutil.WriteFile("static/img/acptcha/log.jpg", resp.CaptchaImage, os.FileMode(0755))
+		if err != nil {
+			return map[string]interface{}{
+				"error": 10010,
+				"text":  "(验证码获取失败) login failed",
+			}
+		}
+
+		return map[string]interface{}{
+			"error": 10011,
+			"text":  "(登陆需要验证码) login failed",
+			"url":   "/static/img/acptcha/log.jpg",
+			"sign":  resp.CaptchaSign,
+		}
+
+	case client.UnsafeDeviceError:
+		// 不安全设备错误
+		return map[string]interface{}{
+			"error": 10020,
+			"text":  "(不安全设备错误) login failed",
+			"url":   resp.VerifyUrl,
+		}
+	case client.SMSNeededError:
+
+		// 需要SMS错误
+		return map[string]interface{}{
+			"error": 10030,
+			"text":  "(需要短信验证码) login failed",
+		}
+
+	case client.TooManySMSRequestError:
+		// 短信请求错误太多
+
+		return map[string]interface{}{
+			"error": 10040,
+			"text":  "(短信请求错误太多) login failed",
+		}
+
+	case client.SMSOrVerifyNeededError:
+		// SMS或验证所需的错误
+
+		return map[string]interface{}{
+			"error": 10050,
+			"text":  "(需要短信验证码或扫描二维码) login failed",
+			"url":   resp.VerifyUrl,
+		}
+
+	case client.SliderNeededError:
+		// 需要滑动认证
+
+		return map[string]interface{}{
+			"error": 10060,
+			"text":  "(需要滑动认证) please look at the doc https://github.com/Mrs4s/go-cqhttp/blob/master/docs/slider.md to get ticket",
+			"url":   resp.VerifyUrl,
+		}
+
+	case client.OtherLoginError, client.UnknownLoginError:
+		// 其他登录错误
+
+		return map[string]interface{}{
+			"error": 10070,
+			"text":  "(其他登陆错误) login failed: " + resp.ErrorMessage,
+		}
+
+	}
+
+	return nil
 }

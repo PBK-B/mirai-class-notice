@@ -145,16 +145,18 @@ func InitBot(account int64, password string) error {
 
 			case client.SliderNeededError:
 
-				// 需要滑块错误
-				if client.SystemDeviceInfo.Protocol == client.AndroidPhone {
-					return errors.New("bot login: Android Phone Protocol DO NOT SUPPORT Slide verify")
-					// fmt.Println("Android Phone Protocol DO NOT SUPPORT Slide verify")
-					// fmt.Println("please use other protocol")
-					// os.Exit(2)
-				}
-				bot.Instance.AllowSlider = false
-				bot.Instance.Disconnect()
-				resp, err = bot.Instance.Login()
+				fmt.Println("please look at the doc https://github.com/Mrs4s/go-cqhttp/blob/master/docs/slider.md to get ticket")
+				fmt.Printf("open %s to get ticket\n", resp.VerifyUrl)
+
+				fmt.Printf("等待滑动认证…")
+				// i := 0
+				// for true {
+				// 	if VerifyTicket != "" || i > 100000000000000 {
+				// 		resp, err = bot.Instance.SubmitTicket(VerifyTicket)
+				// 		break
+				// 	}
+				// 	i++
+				// }
 
 				continue
 

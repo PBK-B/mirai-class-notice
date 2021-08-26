@@ -58,11 +58,12 @@ func init() {
 
 		// 机器人相关 API
 		web.NSNamespace("/bot",
-			web.NSRouter("/login", &apis.BotController{}, "post:ApiBotLogin"),
+			web.NSRouter("/login", &apis.BotController{}, "post:ApiLoginBot"),
 			web.NSRouter("/relogin", &apis.BotController{}, "post:ApiBotReLogin"),
 			web.NSRouter("/captcha", &apis.BotController{}, "post:ApiBotSubmitCaptcha"),
 			web.NSRouter("/info", &apis.BotController{}, "get:ApiBotGetInfo"),
 			// web.NSRouter("/test", &apis.BotController{}, "get:ApiBotTest"),
+			web.NSRouter("/login/ticket", &apis.BotController{}, "post:ApiBotVerifyTicket"),
 			web.NSNamespace("/update",
 				web.NSRouter("/groupcode", &apis.BotController{}, "post:ApiUpdateBotGroupcode"),
 			),
