@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/Logiase/MiraiGo-Template/bot"
+	"github.com/Logiase/MiraiGo-Template/utils"
 	"github.com/Mrs4s/MiraiGo/client"
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -86,6 +87,18 @@ func (c *BotController) ApiLoginBot() {
 	// 使用协议
 	bot.UseProtocol(bot.IPad)
 
+	// 使用用户自定义的 device.json 文件
+	deviceByte := utils.ReadFile(helper.GetCurrentAbPath() + "/device.json")
+	if deviceByte == nil {
+		deviceByte = utils.ReadFile(helper.GetCurrentAbPath() + "/conf/device.json")
+	}
+	if deviceByte != nil {
+		fmt.Printf("[botLog] use user device.json flie…\n")
+		if useDeviceErr := client.SystemDeviceInfo.ReadJson(deviceByte); useDeviceErr != nil {
+			fmt.Println("[botLog] device.json error")
+		}
+	}
+
 	// 登录
 	resp, err := bot.Instance.Login()
 
@@ -153,6 +166,18 @@ func (c *BotController) ApiBotReLogin() {
 			// 不同协议可能会有部分功能无法使用
 			// 在登陆前切换协议
 			bot.UseProtocol(bot.IPad)
+
+			// 使用用户自定义的 device.json 文件
+			deviceByte := utils.ReadFile(helper.GetCurrentAbPath() + "/device.json")
+			if deviceByte == nil {
+				deviceByte = utils.ReadFile(helper.GetCurrentAbPath() + "/conf/device.json")
+			}
+			if deviceByte != nil {
+				fmt.Printf("[botLog] use user device.json flie…\n")
+				if useDeviceErr := client.SystemDeviceInfo.ReadJson(deviceByte); useDeviceErr != nil {
+					fmt.Println("[botLog] device.json error")
+				}
+			}
 
 			resp, err := bot.Instance.Login()
 			// 登录
