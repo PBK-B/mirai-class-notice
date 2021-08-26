@@ -18,6 +18,16 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "ayyz666",
+      "name": "ayyz666",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60257793?v=4",
+      "profile": "https://github.com/ayyz666",
+      "contributions": [
+        "bug",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7

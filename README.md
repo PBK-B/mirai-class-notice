@@ -1,6 +1,6 @@
 # mirai-class-notice
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > 🥳 这是一款基于 mirai 的班级 QQ 群课程通知机器人，拥有简单的 web 管理页面，尽量实现一键安装简易操作等功能。
@@ -42,6 +42,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://www.fw1028.top/"><img src="https://avatars.githubusercontent.com/u/59783568?v=4?s=50" width="50px;" alt=""/><br /><sub><b>FangWei</b></sub></a><br /><a href="https://github.com/PBK-B/mirai-class-notice/commits?author=FW27623" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/ayyz666"><img src="https://avatars.githubusercontent.com/u/60257793?v=4?s=50" width="50px;" alt=""/><br /><sub><b>ayyz666</b></sub></a><br /><a href="https://github.com/PBK-B/mirai-class-notice/issues?q=author%3Aayyz666" title="Bug reports">🐛</a> <a href="https://github.com/PBK-B/mirai-class-notice/commits?author=ayyz666" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
