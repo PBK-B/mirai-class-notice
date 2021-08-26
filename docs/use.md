@@ -6,9 +6,11 @@
 
 2, 下载安装包
 
-`wget https://github.com/PBK-B/mirai-class-notice/releases/download/v0.1-Beta/class-notice_linux.tar.gz`
+`wget https://github.com/PBK-B/mirai-class-notice/releases/download/v0.2-Beta/class-notice_linux.tar.gz -O class-notice_linux.tar.gz`
 
 最新版本下载地址：[点击我查看](https://github.com/PBK-B/mirai-class-notice/releases/)
+
+网络不好的话可以手动下载上传到服务器。
 
 3, 解压缩
 
