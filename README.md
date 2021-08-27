@@ -16,6 +16,8 @@
 
 [【精选博客】使用宝塔面板搭建 QQ 群课程通知机器人](https://www.fw1028.top/archives/177)
 
+[【精选博客】保姆式宝塔搭建 class-notice 教程](docs/blog/bt-use-tutorial-21827.md)
+
 ## 功能 🦁
 
 -   用户登陆
@@ -47,7 +49,7 @@
 <table>
   <tr>
     <td align="center"><a href="https://www.fw1028.top/"><img src="https://avatars.githubusercontent.com/u/59783568?v=4?s=50" width="50px;" alt=""/><br /><sub><b>FangWei</b></sub></a><br /><a href="https://github.com/PBK-B/mirai-class-notice/commits?author=FW27623" title="Tests">⚠️</a> <a href="#blog-FW27623" title="Blogposts">📝</a> <a href="https://github.com/PBK-B/mirai-class-notice/issues?q=author%3AFW27623" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/ayyz666"><img src="https://avatars.githubusercontent.com/u/60257793?v=4?s=50" width="50px;" alt=""/><br /><sub><b>ayyz666</b></sub></a><br /><a href="https://github.com/PBK-B/mirai-class-notice/issues?q=author%3Aayyz666" title="Bug reports">🐛</a> <a href="https://github.com/PBK-B/mirai-class-notice/commits?author=ayyz666" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/ayyz666"><img src="https://avatars.githubusercontent.com/u/60257793?v=4?s=50" width="50px;" alt=""/><br /><sub><b>ayyz666</b></sub></a><br /><a href="https://github.com/PBK-B/mirai-class-notice/issues?q=author%3Aayyz666" title="Bug reports">🐛</a> <a href="https://github.com/PBK-B/mirai-class-notice/commits?author=ayyz666" title="Tests">⚠️</a> <a href="docs/blog/bt-use-tutorial-21827.md" title="Blogposts">📝</a></td>
   </tr>
 </table>
 
