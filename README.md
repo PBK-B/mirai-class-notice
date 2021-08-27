@@ -18,23 +18,6 @@
 
 [【精选博客】保姆式宝塔搭建 class-notice 教程](docs/blog/bt-use-tutorial-21827.md)
 
-## 使用中遇到问题了？
-
-Q：[怎么设置自动发送课程通知？上课时间设置 24 小时制？用什么分隔符号？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906876569)
-
-
-Q：[QQ 账号一直显示登陆失败？](https://github.com/PBK-B/mirai-class-notice/issues/4#issuecomment-905483607)
-
-
-Q：[运行之后输出日志报错: `must have one register DataBase alias named 'default'`](https://github.com/PBK-B/mirai-class-notice/issues/9#issuecomment-906110508)
-
-
-Q：[登陆机器人的时候提示:(其他登陆错误) login failed: 当前上网环境异常，请更换网络环境或在常用设备上登录或稍后再试。请问这种情况要怎么办呀？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906104558)
-
-
-> 遇到了其他问题或者有啥改进和优化建议？欢迎 [创建 Issue](https://github.com/PBK-B/mirai-class-notice/issues/new) ，或者加入 QQ 群: 664649817 
-
-
 ## 功能 🦁
 
 -   用户登陆
@@ -53,6 +36,22 @@ Q：[登陆机器人的时候提示:(其他登陆错误) login failed: 当前上
 -   首页展示系统信息
 -   自定义消息模版
 -   Linux 一键安装脚本
+
+## 遇到问题了？
+
+Q：[怎么设置自动发送课程通知？上课时间设置 24 小时制？用什么分隔符号？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906876569)
+
+
+Q：[QQ 账号一直显示登陆失败？](https://github.com/PBK-B/mirai-class-notice/issues/4#issuecomment-905483607)
+
+
+Q：[运行之后输出日志报错: `must have one register DataBase alias named 'default'`](https://github.com/PBK-B/mirai-class-notice/issues/9#issuecomment-906110508)
+
+
+Q：[登陆机器人的时候提示:(其他登陆错误) login failed: 当前上网环境异常，请更换网络环境或在常用设备上登录或稍后再试。请问这种情况要怎么办呀？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906104558)
+
+
+> 遇到了其他问题或者有啥改进和优化建议？欢迎 [创建 Issue](https://github.com/PBK-B/mirai-class-notice/issues/new) ，或者加入 QQ 群: `664649817`
 
 ## Contributors ✨
 
