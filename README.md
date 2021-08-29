@@ -51,6 +51,9 @@ Q：[运行之后输出日志报错: `must have one register DataBase alias name
 Q：[登陆机器人的时候提示:(其他登陆错误) login failed: 当前上网环境异常，请更换网络环境或在常用设备上登录或稍后再试。请问这种情况要怎么办呀？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906104558)
 
 
+Q：[登陆机器人的时候提示: QQ 账号登陆异常，Packet timed out](https://github.com/PBK-B/mirai-class-notice/issues/10)
+
+
 > 遇到了其他问题或者有啥改进和优化建议？欢迎 [创建 Issue](https://github.com/PBK-B/mirai-class-notice/issues/new) ，或者加入 QQ 群: `664649817`
 
 ## Contributors ✨
