@@ -68,13 +68,19 @@ func (c *UsersController) ApiGetMe() {
 func (c *UsersController) ApiCreateUser() {
 
 	// 要求登陆助理函数
-	userAssistant(&c.Controller)
+	_, me, _ := userAssistant(&c.Controller)
 
 	u_name := c.GetString("name")
 	u_password := c.GetString("password")
 
 	if u_name == "" || u_password == "" {
 		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	if !isAdminUser(me) {
+		callBackResult(&c.Controller, 403, "权限不足", nil)
 		c.Finish()
 		return
 	}
@@ -99,7 +105,7 @@ func (c *UsersController) ApiCreateUser() {
 
 func (c *UsersController) ApiUpStatusUser() {
 	// 要求登陆助理函数
-	userAssistant(&c.Controller)
+	_, me, _ := userAssistant(&c.Controller)
 
 	u_id, _ := c.GetInt("id", 0)
 
@@ -112,6 +118,12 @@ func (c *UsersController) ApiUpStatusUser() {
 	// 防止全部用户被禁用状态导致系统进入假锁死
 	if u_id == 1 {
 		callBackResult(&c.Controller, 200, "默认 admin 用户不能禁用！", nil)
+		c.Finish()
+		return
+	}
+
+	if !isAdminUser(me) {
+		callBackResult(&c.Controller, 403, "权限不足", nil)
 		c.Finish()
 		return
 	}
@@ -150,6 +162,7 @@ func (c *UsersController) ApiUpStatusUser() {
 	c.Finish()
 }
 
+// 修改用户密码接口
 func (c *UsersController) ApiUpdateUser() {
 	// 要求登陆助理函数
 	_, me, _ := userAssistant(&c.Controller)
@@ -163,8 +176,7 @@ func (c *UsersController) ApiUpdateUser() {
 		return
 	}
 
-	// TODO: 目前简单判断 ID 为 1 的用户为超级管理员
-	if me.Id != 1 && me.Id != u_id {
+	if !isAdminUser(me) && me.Id != u_id {
 		callBackResult(&c.Controller, 403, "权限不足", nil)
 		c.Finish()
 		return
@@ -227,4 +239,14 @@ func (c *UsersController) ApiUserList() {
 	}
 
 	callBackResult(&c.Controller, 200, "", new_users)
+}
+
+// 做一个简单的判断用户是否属于超级管理员
+func isAdminUser(u models.Users) bool {
+	// TODO: 目前简单判断 ID 为 1 的用户为超级管理员
+	if u.Id == 1 {
+		return true
+	} else {
+		return false
+	}
 }

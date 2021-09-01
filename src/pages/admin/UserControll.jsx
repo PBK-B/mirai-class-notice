@@ -284,11 +284,7 @@ function UserControll() {
 										<Button
 											appearance="link"
 											onClick={disableAction}
-											disabled={
-												rowData.id === UserStore?.me?.id || UserStore?.me?.id === 1
-													? false
-													: true
-											}
+											disabled={ UserStore?.me?.id !== 1}
 										>
 											{rowData.status === '启用' ? ' 禁用 ' : ' 启用 '}
 										</Button>
