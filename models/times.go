@@ -7,6 +7,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/task"
@@ -219,12 +220,21 @@ func TimesRunAllTask() {
 			if h >= 0 && h < 24 && m >= 0 && m <= 60 {
 				// 时间合法
 				// TODO: 这里需要加上一个提前一个设定的时间
-				h = h - 1
-				if h < 0 {
-					// FIX 修复凌晨 0 点减去一个小时后导致变成负数
-					h = 23
+				var notifyTime int64 = 60
+				if timeConfig, timeErr := GetConfigsDataByName("system"); timeConfig != nil && timeErr == nil {
+					notifyTime = int64(timeConfig["notice_minute"].(float64))
 				}
-				// 现在先默认提前一个小时通知
+
+				nTime := transformEstimateTime(startStr, notifyTime)
+				h = nTime.Hour()
+				m = nTime.Minute()
+
+				// h = h - 1
+				// if h < 0 {
+				// 	// FIX 修复凌晨 0 点减去一个小时后导致变成负数
+				// 	h = 23
+				// }
+				// 之前是默认提前一个小时通知
 
 				ts := fmt.Sprintf("0 %s %s * * *", fmt.Sprint(m), fmt.Sprint(h))
 				new_time := ls[index]
@@ -245,4 +255,14 @@ func TimesRunAllTask() {
 
 	task.StartTask() // 启动全局任务
 	log.Println("【models.Time】注册全部上课时间定时任务成功！")
+}
+
+// 转换时间工具方法
+func transformEstimateTime(date string, minutes int64) time.Time {
+	s := minutes * 60
+	ts := fmt.Sprintf("2010-01-01 %s:00", date)
+	t, _ := time.ParseInLocation("2006-01-02 15:04:00", ts, time.Local)
+	newT := t.Unix() - s
+	tm := time.Unix(newT, 0)
+	return tm
 }
