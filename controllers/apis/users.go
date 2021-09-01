@@ -152,13 +152,20 @@ func (c *UsersController) ApiUpStatusUser() {
 
 func (c *UsersController) ApiUpdateUser() {
 	// 要求登陆助理函数
-	userAssistant(&c.Controller)
+	_, me, _ := userAssistant(&c.Controller)
 
 	u_id, _ := c.GetInt("id", 0)
 	u_password := c.GetString("password")
 
 	if u_id == 0 || u_password == "" {
 		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	// TODO: 目前简单判断 ID 为 1 的用户为超级管理员
+	if me.Id != 1 && me.Id != u_id {
+		callBackResult(&c.Controller, 403, "权限不足", nil)
 		c.Finish()
 		return
 	}
@@ -173,6 +180,8 @@ func (c *UsersController) ApiUpdateUser() {
 
 	// TODO: Bin BY 这里应该还可以做判断用户名和密码是否合法
 	user.Password = helper.StringToMd5(u_password)
+
+	err = models.UpdateUsersById(user)
 
 	if err != nil {
 		callBackResult(&c.Controller, 200, "出错啦，"+err.Error(), nil)

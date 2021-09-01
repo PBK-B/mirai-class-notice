@@ -1,47 +1,62 @@
 {
-  "name": "mirai-class-notice",
-  "version": "1.0.0",
-  "description": "🥳 这是一款基于 mirai 的班级 QQ 群课程通知机器人，拥有简单的 web 管理页面，尽量实现一键安装简易操作等功能。",
-  "main": "src/index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "scripts": {
-    "watch": "npx mix watch",
-    "debug": "npx mix",
-    "build": "npx mix --production"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PBK-B/mirai-class-notice.git"
-  },
-  "keywords": [
-    "mirai-web"
-  ],
-  "author": "PBK-B",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/PBK-B/mirai-class-notice/issues"
-  },
-  "homepage": "https://github.com/PBK-B/mirai-class-notice#readme",
-  "devDependencies": {
-    "@babel/preset-react": "^7.12.13",
-    "all-contributors-cli": "^6.20.0",
-    "laravel-mix": "^6.0.13",
-    "less": "^2.7.3",
-    "less-loader": "^4.1.0",
-    "postcss": "^8.2.8",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "resolve-url-loader": "^3.1.2",
-    "sass": "^1.32.8",
-    "sass-loader": "^10.1.1"
-  },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "axios-hooks": "^2.4.1",
-    "js-md5": "^0.7.3",
-    "qrcode": "^1.4.4",
-    "rsuite": "^4.9.2"
-  }
+	"name": "mirai-class-notice",
+	"version": "1.0.0",
+	"description": "🥳 这是一款基于 mirai 的班级 QQ 群课程通知机器人，拥有简单的 web 管理页面，尽量实现一键安装简易操作等功能。",
+	"main": "src/index.js",
+	"directories": {
+		"test": "tests"
+	},
+	"scripts": {
+		"watch": "npx mix watch",
+		"debug": "npx mix",
+		"build": "npx mix --production",
+		"pack": "npm run build && bee pack -exs=.:node_modules:src:logs:conf/app.conf:.git:package-lock.json:package.json:helper:models:routers:tests:main.go",
+		"pack-windows": "npm run build && bee pack -exs=.:node_modules:src:logs:conf/app.conf:.git:package-lock.json:package.json:helper:models:routers:tests:main.go -be='GOOS=windows' ",
+		"pack-linux": "npm run build && bee pack -exs=.:node_modules:src:logs:conf/app.conf:.git:package-lock.json:package.json:helper:models:routers:tests:main.go -be='GOOS=linux'"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/PBK-B/mirai-class-notice.git"
+	},
+	"keywords": [
+		"mirai-web"
+	],
+	"author": "PBK-B",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/PBK-B/mirai-class-notice/issues"
+	},
+	"homepage": "https://github.com/PBK-B/mirai-class-notice#readme",
+	"devDependencies": {
+		"@babel/plugin-proposal-class-properties": "^7.14.5",
+		"@babel/preset-react": "^7.12.13",
+		"all-contributors-cli": "^6.20.0",
+		"laravel-mix": "^6.0.13",
+		"less": "^2.7.3",
+		"less-loader": "^4.1.0",
+		"mobx": "^6.3.3",
+		"mobx-react": "^7.2.0",
+		"postcss": "^8.2.8",
+		"react": "^17.0.1",
+		"react-dom": "^17.0.1",
+		"resolve-url-loader": "^3.1.2",
+		"sass": "^1.32.8",
+		"sass-loader": "^10.1.1"
+	},
+	"dependencies": {
+		"axios": "^0.21.1",
+		"axios-hooks": "^2.4.1",
+		"js-md5": "^0.7.3",
+		"qrcode": "^1.4.4",
+		"rsuite": "^4.9.2"
+	},
+	"babel": {
+		"presets": [
+			"@babel/preset-env",
+			"@babel/preset-react"
+		],
+		"plugins": [
+			"@babel/plugin-proposal-class-properties"
+		]
+	}
 }
