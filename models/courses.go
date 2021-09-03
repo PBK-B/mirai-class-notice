@@ -169,8 +169,12 @@ func CoursesRepeat(m *Courses) bool {
 
 func CoursesToMap(course Courses) map[string]interface{} {
 	var _cycle_obj interface{}
+	var cycle_obj []interface{}
 	json.Unmarshal([]byte(course.Cycle), &_cycle_obj)
-	cycle_obj := _cycle_obj.([]interface{})
+
+	if _cycle_obj != nil {
+		cycle_obj = _cycle_obj.([]interface{})
+	}
 
 	return map[string]interface{}{
 		"id":            course.Id,
