@@ -116,7 +116,9 @@ func GetConfigsDataById(id int) (data map[string]interface{}, err error) {
 	dataStr := c.Data
 	var data_obj interface{}
 	json.Unmarshal([]byte(dataStr), &data_obj)
-	data = data_obj.(map[string]interface{})
+	if data_obj != nil {
+		data = data_obj.(map[string]interface{})
+	}
 	return
 }
 
@@ -129,7 +131,9 @@ func GetConfigsDataByName(name string) (data map[string]interface{}, err error) 
 	dataStr := c.Data
 	var data_obj interface{}
 	json.Unmarshal([]byte(dataStr), &data_obj)
-	data = data_obj.(map[string]interface{})
+	if data_obj != nil {
+		data = data_obj.(map[string]interface{})
+	}
 	return
 }
 
