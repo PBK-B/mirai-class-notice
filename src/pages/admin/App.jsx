@@ -74,9 +74,11 @@ export default function App() {
 		<Container style={{ height: '100%' }}>
 			<AppHeader user={user} />
 
-			<FlexboxGrid>
+			<FlexboxGrid style={{ height: '100vh', overflow: 'hidden' }}>
 				<FlexboxGrid.Item
 					style={{
+						display: 'flex',
+						flexDirection: 'column',
 						height: '100%',
 						background: '#f7f7fa',
 						paddingTop: 15,
@@ -86,22 +88,31 @@ export default function App() {
 					colspan={3}
 				>
 					<AppMenu width={260} expanded={true} activeKey={activeKey} onSelect={handleSelect} />
+
+					{/* <div style={{ flex: 1 }} />
+					<div>
+						<p style={{ padding: 15, color: '#0004' }}>系统版本: v0.2 Beta</p>
+					</div> */}
 				</FlexboxGrid.Item>
 
-				<FlexboxGrid.Item style={{ flex: 1, height: '100%' }}>
+				<FlexboxGrid.Item
+					style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto', height: '100%' }}
+				>
 					<Content
 						style={{
-							margin: 'auto',
+							margin: '0 auto',
 							maxWidth: '1200px',
+							minWidth: '1200px',
 						}}
 						className="app-content"
 					>
 						{AppContents[activeKey]}
 					</Content>
+					<div>
+						<AppFooter />
+					</div>
 				</FlexboxGrid.Item>
 			</FlexboxGrid>
-
-			<AppFooter />
 		</Container>
 	);
 }

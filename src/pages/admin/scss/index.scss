@@ -1,64 +1,63 @@
 body {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 
-  #root {
-    height: 100vh;
-  }
+	#root {
+		height: 100vh;
+	}
 
-  .logo {
-    text-decoration: none;
-  }
+	.logo {
+		text-decoration: none;
+	}
 
-  .app-content {
-    min-height: 85vh;
-  }
+	.app-content {
+		// min-height: 85vh;
+	}
 
-  .custom-input-number {
-    input {
-      text-align: center;
-    }
+	.custom-input-number {
+		input {
+			text-align: center;
+		}
 
-    .rs-input-number-btn-group-vertical {
-      display: none;
-    }
-  }
+		.rs-input-number-btn-group-vertical {
+			display: none;
+		}
+	}
 
-  .page-system {
-    .list-view {
-      .item-view {
-        padding: 25px 0;
-      }
-      .item-title {
-        text-align: end;
-      }
+	.page-system {
+		.list-view {
+			.item-view {
+				padding: 25px 0;
+			}
+			.item-title {
+				text-align: end;
+			}
 
-      button {
-        color: #fff;
-      }
-    }
+			button {
+				color: #fff;
+			}
+		}
 
-    .qq-name {
-      padding: 7px 0;
-    }
+		.qq-name {
+			padding: 7px 0;
+		}
 
-    .rs-avatar-image {
-      border-radius: 100px;
-      padding: 1px;
-    }
+		.rs-avatar-image {
+			border-radius: 100px;
+			padding: 1px;
+		}
+	}
 
-  }
+	@media screen and (max-width: 1300px) {
+		.app-content {
+			padding: 0 25px;
+		}
+		.app-menu {
+			width: 55px;
 
-  @media screen and (max-width: 1300px) {
-    .app-content {
-      padding: 0 25px;
-    }
-    .app-menu {
-      width: 55px;
-
-      .app-menu-text {
-        line-height: 5px;
-      }
-    }
-  }
+			.app-menu-text {
+				line-height: 5px;
+			}
+		}
+	}
 }
