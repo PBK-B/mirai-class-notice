@@ -19,10 +19,10 @@ import axios from 'axios';
 
 import { PageHead } from '../components';
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 function WeekTimeSelector(props) {
-	const { data, style, onDataChange, operation, onOperationChange } = props;
+	const { data, style, onDataChange, operation, onOperationChange, defaultSelects = [] } = props;
 	const [selectorData, setselectorData] = useState([]);
 
 	useEffect(() => {
@@ -60,14 +60,15 @@ function WeekTimeSelector(props) {
 					return {
 						index,
 						value: item,
-						select: false,
+						select: defaultSelects?.includes(item),
 					};
 				});
 				break;
 		}
 		setselectorData(newData);
 		onDataChange(newData);
-	}, [operation]);
+		// console.log('默认数据', defaultSelects);
+	}, [data, operation]);
 
 	const onClickSelector = (index) => {
 		const newData = [...selectorData];
@@ -156,12 +157,14 @@ export default function CreateCourse(props) {
 					if (cData?.cycle?.length == 20) {
 						setwtOperation('all');
 						setwtOperationGroup('all');
-					} else if (cData?.cycle[1] == 3) {
-						setwtOperation('singular');
-						setwtOperationGroup('singular');
-					} else if (cData?.cycle[1] == 4) {
-						setwtOperation('even');
-						setwtOperationGroup('even');
+					} else if (cData?.cycle?.length / 2 == 10) {
+						if (cData?.cycle[1] == 3) {
+							setwtOperation('singular');
+							setwtOperationGroup('singular');
+						} else if (cData?.cycle[1] == 4) {
+							setwtOperation('even');
+							setwtOperationGroup('even');
+						}
 					}
 
 					// console.log('课程数据', cData);
@@ -177,6 +180,29 @@ export default function CreateCourse(props) {
 	function goBack() {
 		toPage('CourseList');
 	}
+
+	// const systemInfoWeeks = useRef([]);
+	const [systemInfoWeeks, setsystemInfoWeeks] = useState([]);
+	const [{ data: systemInfoData, loading: systemLoading, error: systemError }, systemRefch] = useAxios({
+		url: '/api/system/info',
+	});
+	useEffect(() => {
+		if (systemInfoData) {
+			// 通过获取系统设定的上课周数渲染可选周数组件
+			let few_weeks = 20;
+			const weeks = [];
+			if (systemInfoData?.data?.few_weeks) {
+				few_weeks = systemInfoData?.data?.few_weeks;
+			}
+			for (let i = 1; i <= few_weeks; i++) {
+				weeks.push(i);
+			}
+			// systemInfoWeeks.current = weeks;
+			setsystemInfoWeeks(weeks);
+
+			// console.log('系统设置', systemInfoData);
+		}
+	}, [systemInfoData]);
 
 	const [{ data: timeListData, loading: timeListLoading, error: timeListError }, timeListRefetch] = useAxios({
 		url: '/api/time/list?count=999',
@@ -461,24 +487,47 @@ export default function CreateCourse(props) {
 			<Col style={{ marginTop: 40 }}>
 				<p style={{ marginBottom: 20 }}>上课周数</p>
 
-				<WeekTimeSelector
-					data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]}
-					operation={wtOperation}
-					onDataChange={(data) => {
-						const dataArray = [];
-						data?.map((item, index) => {
-							if (!item.select) {
-								return;
-							}
-							dataArray.push(item.value);
-						});
-						setcycle(dataArray);
-						// console.log("返回数据", JSON.stringify(dataArray));
-					}}
-					onOperationChange={(value) => {
-						setwtOperationGroup(value);
-					}}
-				/>
+				{courseData?.cycle ? (
+					<WeekTimeSelector
+						data={systemInfoWeeks}
+						defaultSelects={courseData?.cycle || []}
+						operation={wtOperation}
+						onDataChange={(data) => {
+							const dataArray = [];
+							data?.map((item, index) => {
+								if (!item.select) {
+									return;
+								}
+								dataArray.push(item.value);
+							});
+							setcycle(dataArray);
+							// console.log("返回数据", JSON.stringify(dataArray));
+						}}
+						onOperationChange={(value) => {
+							setwtOperationGroup(value);
+						}}
+					/>
+				) : (
+					<WeekTimeSelector
+						data={systemInfoWeeks}
+						defaultSelects={[]}
+						operation={wtOperation}
+						onDataChange={(data) => {
+							const dataArray = [];
+							data?.map((item, index) => {
+								if (!item.select) {
+									return;
+								}
+								dataArray.push(item.value);
+							});
+							setcycle(dataArray);
+							// console.log("返回数据", JSON.stringify(dataArray));
+						}}
+						onOperationChange={(value) => {
+							setwtOperationGroup(value);
+						}}
+					/>
+				)}
 
 				<Col>
 					<RadioGroup
