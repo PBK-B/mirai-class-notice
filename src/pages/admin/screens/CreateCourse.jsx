@@ -487,7 +487,7 @@ export default function CreateCourse(props) {
 			<Col style={{ marginTop: 40 }}>
 				<p style={{ marginBottom: 20 }}>上课周数</p>
 
-				{courseData?.cycle ? (
+				{courseData?.cycle?.length ? (
 					<WeekTimeSelector
 						data={systemInfoWeeks}
 						defaultSelects={courseData?.cycle || []}
