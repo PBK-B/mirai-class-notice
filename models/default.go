@@ -50,6 +50,7 @@ func init() {
 		new(Accounts), // 账号
 		new(Times),    // 时间
 		new(Courses),  // 课表
+		new(Plugin),   // 插件
 	)
 
 	// 第二个参数为 true 则强制重新建表

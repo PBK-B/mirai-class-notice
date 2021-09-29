@@ -68,6 +68,11 @@ func init() {
 				web.NSRouter("/groupcode", &apis.BotController{}, "post:ApiUpdateBotGroupcode"),
 			),
 		),
+
+		// 插件相关 API
+		web.NSNamespace("/plugin",
+			web.NSRouter("/upload", &apis.PluginController{}, "post:ApiUploadPlugin"),
+		),
 	)
 
 	web.AddNamespace(api)
