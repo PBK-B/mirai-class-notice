@@ -10,7 +10,7 @@ import (
 type Configs struct {
 	Id   int
 	Name string `orm:"size(128)"`
-	Data string `orm:"type(longtext)"`
+	Data string `orm:"type(text)"`
 }
 
 func init() {
