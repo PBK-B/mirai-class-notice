@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"plugin"
 	"strconv"
 
 	"reflect"
@@ -101,6 +103,27 @@ func (p *Plugin) ToMap() map[string]interface{} {
 		"website": p.Website,
 		"states":  p.States,
 	}
+}
+
+// Plugin 注册到 MiraiGo 中
+func (p *Plugin) LoadRegisterModule() (err error) {
+	// 获取插件 SO 文件绝对路径
+	var pluginPathSO = filepath.Join(helper.GetCurrentAbPath(), p.Path+"/build.so")
+
+	// 加载 so 文件，调用 RegisterModule 方法注册插件
+	plu, err := plugin.Open(pluginPathSO)
+	if plu == nil || err != nil {
+		p.AddLog("加载插件 so 文件失败，" + err.Error())
+		return
+	}
+	registerModule, err := plu.Lookup("RegisterModule")
+	if err != nil {
+		p.AddLog("加载插件 RegisterModule 方法未实现，" + err.Error())
+		return
+	}
+	registerModule.(func())()
+	p.AddLog("插件 (" + p.Package + ") 注册成功。")
+	return
 }
 
 // AddPlugin insert a new Plugin into database and returns
@@ -206,10 +229,11 @@ func UpdatePluginById(m *Plugin) (err error) {
 	v := Plugin{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
-		var num int64
-		if num, err = o.Update(m); err == nil {
-			fmt.Println("Number of records updated in database:", num)
-		}
+		// var num int64
+		// if num, err = o.Update(m); err == nil {
+		// 	fmt.Println("Number of records updated in database:", num)
+		// }
+		_, err = o.Update(m)
 	}
 	return
 }
@@ -226,6 +250,14 @@ func DeletePlugin(id int) (err error) {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}
+	return
+}
+
+// 获取全部插件
+func AllPlugin(limit int, page int) (plugin []Plugin, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(&Plugin{})
+	_, err = qs.Filter("id__isnull", false).Limit(limit, page).All(&plugin)
 	return
 }
 
@@ -283,6 +315,9 @@ func InstallPlugin(file string) (p *Plugin, err error) {
 
 			p.AddLog("插件升级安装 (" + strconv.FormatFloat(manifestObj.Version, 'f', -1, 64) + ") 成功！")
 
+			// 注册插件
+			p.LoadRegisterModule()
+
 			return p, nil
 		}
 	}
@@ -317,6 +352,9 @@ func InstallPlugin(file string) (p *Plugin, err error) {
 			p.AddLog("插件默认数据配置成功！")
 		}
 	}
+
+	// 注册插件
+	p.LoadRegisterModule()
 
 	return
 }

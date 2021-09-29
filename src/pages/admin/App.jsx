@@ -9,6 +9,7 @@ import UserControll from './UserControll';
 import TimeControll from './TimeControll';
 import CourseControll from './CourseControll';
 import SystemSetup from './SystemSetup';
+import PluginControl from './PluginControl';
 
 import { UserStore } from './stores';
 
@@ -68,6 +69,7 @@ export default function App() {
 		3: <TimeControll />,
 		4: <CourseControll />,
 		5: <SystemSetup />,
+		6: <PluginControl />,
 	};
 
 	return (

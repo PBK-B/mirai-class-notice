@@ -72,6 +72,7 @@ func init() {
 		// 插件相关 API
 		web.NSNamespace("/plugin",
 			web.NSRouter("/upload", &apis.PluginController{}, "post:ApiUploadPlugin"),
+			web.NSRouter("/list", &apis.PluginController{}, "get:ApiPluginList"),
 		),
 	)
 

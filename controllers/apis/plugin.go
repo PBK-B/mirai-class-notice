@@ -72,3 +72,29 @@ func (c *PluginController) ApiUploadPlugin() {
 	callBackResult(&c.Controller, 200, "", plugin.ToMap())
 	c.Finish()
 }
+
+// 获取插件列表接口
+func (c *PluginController) ApiPluginList() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+	u_count, _ := c.GetInt("count", 10)
+	u_page, _ := c.GetInt("page", 0)
+
+	plugins, err := models.AllPlugin(u_count, u_page)
+
+	if err != nil {
+		callBackResult(&c.Controller, 403, "服务器错误", nil)
+		c.Finish()
+		return
+	}
+
+	var new_plugins []interface{}
+
+	for item := range plugins {
+		i_p := plugins[item]
+		new_u := i_p.ToMap()
+		new_plugins = append(new_plugins, new_u)
+	}
+
+	callBackResult(&c.Controller, 200, "", new_plugins)
+}
