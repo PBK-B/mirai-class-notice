@@ -3,3 +3,4 @@ app.conf
 application.yaml
 logs/
 .DS_Store
+files/
