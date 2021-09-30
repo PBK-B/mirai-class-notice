@@ -14,6 +14,7 @@ import {
 	FormControl,
 	FormGroup,
 	ControlLabel,
+	Uploader,
 	Row,
 } from 'rsuite';
 
@@ -42,6 +43,11 @@ export default function PluginControl() {
 		users = data_array;
 	}
 
+	// 安装插件配置
+	const [installConfig, setinstallConfig] = useState({
+		showModal: false,
+	});
+
 	if (loading) return <Loader backdrop content="loading..." vertical />;
 
 	return (
@@ -51,7 +57,14 @@ export default function PluginControl() {
 
 			<FlexboxGrid style={{ marginBottom: 15 }} justify="end">
 				<FlexboxGrid.Item>
-					<Button appearance="ghost" onClick={() => {}} disabled={UserStore?.me?.id !== 1}>
+					<Button
+						appearance="ghost"
+						onClick={() =>
+							setinstallConfig({
+								showModal: true,
+							})
+						}
+					>
 						安装插件
 					</Button>
 				</FlexboxGrid.Item>
@@ -162,22 +175,55 @@ export default function PluginControl() {
 				</Table>
 			</Panel>
 
-			<Modal show={false} onHide={() => {}} backdrop="static">
+			<Modal
+				show={installConfig?.showModal}
+				onHide={() =>
+					setinstallConfig({
+						showModal: false,
+					})
+				}
+				backdrop="static"
+			>
 				<Modal.Header>
 					<Modal.Title>安装插件</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<Form fluid onChange={() => {}} formValue={() => {}}>
-						<FormGroup>
-							<ControlLabel>账号：</ControlLabel>
-							<FormControl name="name" />
-						</FormGroup>
+					<Uploader
+						action="/api/plugin/upload"
+						draggable
+						multiple={false}
+						fileListVisible={false}
+						name="plugin"
+						onSuccess={(response, file) => {
+							const { code, msg } = response;
+							// console.log('上传成功', response);
+							setinstallConfig({
+								showModal: false,
+							});
 
-						<FormGroup>
-							<ControlLabel>密码：</ControlLabel>
-							<FormControl name="passwd" />
-						</FormGroup>
-					</Form>
+							if (code < 1) {
+								Notification.error({
+									title: msg || '插件安装失败，请稍后重试',
+								});
+							} else {
+								refetch(); // 刷新列表
+								Notification.success({
+									title: '插件安装成功。',
+								});
+							}
+						}}
+						onError={(reason, file) => {
+							setinstallConfig({
+								showModal: false,
+							});
+
+							Notification.error({
+								title: '安装失败，' + reason,
+							});
+						}}
+					>
+						<div style={{ lineHeight: 15 }}>点击选择文件或拖拽文件到此处</div>
+					</Uploader>
 				</Modal.Body>
 			</Modal>
 		</div>

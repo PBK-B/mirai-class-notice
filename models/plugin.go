@@ -98,7 +98,7 @@ func (p *Plugin) ToMap() map[string]interface{} {
 		"name":    p.Name,
 		"version": p.Version,
 		"package": p.Package,
-		"logs":    p.Logs,
+		// "logs":    p.Logs,
 		"author":  p.Author,
 		"website": p.Website,
 		"states":  p.States,
