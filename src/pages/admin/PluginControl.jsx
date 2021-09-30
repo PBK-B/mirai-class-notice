@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useAxios from 'axios-hooks';
 import axios from 'axios';
 
@@ -16,6 +16,7 @@ import {
 	ControlLabel,
 	Uploader,
 	Row,
+	Drawer,
 } from 'rsuite';
 
 import { UserStore } from './stores';
@@ -23,9 +24,64 @@ import { observer } from 'mobx-react';
 
 const { Column, HeaderCell, Cell, Pagination } = Table;
 
+const ViewerLogsDrawer = (props) => {
+	const { show, onClose, data } = props;
+
+	const [{ data: logsData, loading, error }, refetch] = useAxios({
+		url: '/api/plugin/info/logs?id=' + data?.id,
+	});
+
+	const refPolling = useRef();
+
+	useEffect(() => {
+		if (refetch) {
+			// 判断数据刷新方法存在的话启动定时轮询
+			refPolling.current = setInterval(() => refetch(), 2500);
+		}
+		return () => {
+			if (refPolling.current) {
+				// 判断轮询已经启动的话需要卸载轮询
+				clearInterval(refPolling.current);
+			}
+		};
+	}, []);
+
+	return (
+		<Drawer show={show} onHide={onClose}>
+			<Drawer.Header>
+				<Drawer.Title>插件日志</Drawer.Title>
+				<p style={{ marginTop: 5 }}>{`${data?.name} v${data?.version} (${data?.package}) `}</p>
+			</Drawer.Header>
+			<Drawer.Body style={{ overflow: 'unset' }}>
+				<div
+					style={{
+						width: '100%',
+						height: '100%',
+						overflow: 'auto',
+						borderRadius: 5,
+						background: '#1e1e1e',
+						padding: '20px 0',
+						color: '#FFF',
+						paddingRight: 15,
+						paddingLeft: 15,
+						minHeight: 200,
+					}}
+				>
+					<code style={{ whiteSpace: 'pre-line', wordWrap: 'break-word' }}>{logsData?.data || ''}</code>
+				</div>
+			</Drawer.Body>
+			<Drawer.Footer>
+				<Button style={{ marginBottom: 15 }} onClick={onClose} appearance="subtle">
+					关闭
+				</Button>
+			</Drawer.Footer>
+		</Drawer>
+	);
+};
+
 export default function PluginControl() {
 	const [{ data, loading, error }, refetch] = useAxios({
-		url: '/api/plugin/list',
+		url: '/api/plugin/list?count=999',
 	});
 
 	// 用户列表数据处理
@@ -46,6 +102,12 @@ export default function PluginControl() {
 	// 安装插件配置
 	const [installConfig, setinstallConfig] = useState({
 		showModal: false,
+	});
+
+	// 查看插件日志
+	const [viewerLog, setviewerLog] = useState({
+		data: {},
+		show: false,
 	});
 
 	if (loading) return <Loader backdrop content="loading..." vertical />;
@@ -125,13 +187,6 @@ export default function PluginControl() {
 						<Cell style={{ padding: 0, display: 'flex', alignItems: 'center' }}>
 							{(rowData) => {
 								function editAction(e) {
-									setupdateUser({
-										id: rowData.id,
-										name: rowData.name,
-										passwd: '',
-									});
-									setshowUpdateUser(true);
-
 									// 结束事件分发
 									e.stopPropagation();
 								}
@@ -139,32 +194,28 @@ export default function PluginControl() {
 								function disableAction(e) {
 									// 结束事件分发
 									e.stopPropagation();
-									APIDisableUser(rowData.id, rowData.status === '启用');
+								}
+
+								function showLogs(e) {
+									setviewerLog({
+										data: rowData,
+										show: true,
+									});
+									// 结束事件分发
+									e.stopPropagation();
 								}
 
 								return (
 									<Row style={{ overflow: 'hidden' }}>
-										<Button
-											appearance="link"
-											onClick={editAction}
-											disabled={
-												rowData.id === UserStore?.me?.id || UserStore?.me?.id === 1
-													? false
-													: true
-											}
-										>
+										<Button appearance="link" onClick={editAction} disabled={true}>
 											配置
 										</Button>
 										|
-										<Button appearance="link" onClick={() => {}}>
+										<Button appearance="link" onClick={showLogs}>
 											日志
 										</Button>
 										|
-										<Button
-											appearance="link"
-											onClick={disableAction}
-											disabled={UserStore?.me?.id !== 1}
-										>
+										<Button appearance="link" onClick={disableAction} disabled={true}>
 											{rowData.status === '启用' ? ' 禁用 ' : ' 启用 '}
 										</Button>
 									</Row>
@@ -174,6 +225,18 @@ export default function PluginControl() {
 					</Column>
 				</Table>
 			</Panel>
+
+			{viewerLog?.data?.id && (
+				<ViewerLogsDrawer
+					show={viewerLog?.show}
+					data={viewerLog?.data}
+					onClose={() =>
+						setviewerLog({
+							show: false,
+						})
+					}
+				/>
+			)}
 
 			<Modal
 				show={installConfig?.showModal}

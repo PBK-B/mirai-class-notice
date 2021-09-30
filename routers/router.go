@@ -73,6 +73,7 @@ func init() {
 		web.NSNamespace("/plugin",
 			web.NSRouter("/upload", &apis.PluginController{}, "post:ApiUploadPlugin"),
 			web.NSRouter("/list", &apis.PluginController{}, "get:ApiPluginList"),
+			web.NSRouter("/info/logs", &apis.PluginController{}, "get:ApiGetPluginLogs"),
 		),
 	)
 

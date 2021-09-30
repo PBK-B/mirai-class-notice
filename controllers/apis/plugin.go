@@ -98,3 +98,26 @@ func (c *PluginController) ApiPluginList() {
 
 	callBackResult(&c.Controller, 200, "", new_plugins)
 }
+
+// 获取插件日志接口
+func (c *PluginController) ApiGetPluginLogs() {
+	// 要求登陆助理函数
+	userAssistant(&c.Controller)
+	id, _ := c.GetInt("id")
+
+	if id == 0 {
+		callBackResult(&c.Controller, 403, "参数异常", nil)
+		c.Finish()
+		return
+	}
+
+	plugin, err := models.GetPluginById(id)
+	if plugin == nil || err != nil {
+		callBackResult(&c.Controller, 403, "插件不存在或已卸载", nil)
+		c.Finish()
+		return
+	}
+
+	callBackResult(&c.Controller, 200, "", plugin.Logs)
+	c.Finish()
+}
