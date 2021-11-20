@@ -59,7 +59,7 @@ Q：[登陆机器人的时候提示: QQ 账号登陆异常，Packet timed out](h
 
 ## Contributors ✨
 
-> 感谢所以使用以及反馈和提出建议的小伙伴们。
+> 感谢所有使用以及反馈和提出建议的小伙伴们。
 >
 > Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
