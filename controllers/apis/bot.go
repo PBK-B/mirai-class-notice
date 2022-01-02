@@ -150,7 +150,7 @@ func (c *BotController) ApiBotReLogin() {
 		b_password := config["password"].(string)
 
 		info := bot.Instance
-		if info != nil && info.Online {
+		if info != nil && info.Online.Load() {
 			callBackResult(&c.Controller, 200, "已登陆，无需重新登陆", nil)
 			c.Finish()
 			return
