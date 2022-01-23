@@ -265,7 +265,7 @@ func AllPlugin(limit int, page int) (plugin []Plugin, err error) {
 func InstallPlugin(file string) (p *Plugin, err error) {
 
 	// 读取插件包 manifest 信息
-	manifestStr, err := helper.TarReaderFile("./manifest.json", file)
+	manifestStr, err := helper.TarReaderFile("manifest.json", file)
 	if err != nil || manifestStr == nil {
 		return p, errors.New("插件包损坏。")
 	}
