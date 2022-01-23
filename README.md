@@ -38,6 +38,9 @@
 -   支持后台安装插件（开发插件相关文档正在准备）
 -   Linux 一键安装脚本
 
+## 插件（实验性）
+[mirai-plugin-checkclass 网课搜题机器人插件](https://github.com/PBK-B/mirai-plugin-checkclass)
+
 ## 遇到问题了？
 
 Q：[怎么设置自动发送课程通知？上课时间设置 24 小时制？用什么分隔符号？](https://github.com/PBK-B/mirai-class-notice/issues/8#issuecomment-906876569)
