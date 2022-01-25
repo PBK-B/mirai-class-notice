@@ -254,10 +254,10 @@ func DeletePlugin(id int) (err error) {
 }
 
 // 获取全部插件
-func AllPlugin(limit int, page int) (plugin []Plugin, err error) {
+func AllPlugin(limit int, page int) (plugins []Plugin, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(&Plugin{})
-	_, err = qs.Filter("id__isnull", false).Limit(limit, page).All(&plugin)
+	_, err = qs.Filter("id__isnull", false).Limit(limit, page).All(&plugins)
 	return
 }
 
@@ -367,4 +367,18 @@ func GetPluginByPackage(pack string) (c *Plugin, err error) {
 		return c, nil
 	}
 	return nil, err
+}
+
+// 重新加载全部插件
+func ReLoadAllPlugin() error {
+	plugins, err := AllPlugin(99, 1)
+	if err != nil {
+		return err
+	}
+
+	for _, plugin := range plugins {
+		plugin.LoadRegisterModule()
+	}
+
+	return nil
 }

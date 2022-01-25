@@ -81,6 +81,9 @@ func (c *BotController) ApiLoginBot() {
 	// 初始化 Bot
 	bot.InitBot(b_account, b_password)
 
+	// 加载全部插件
+	models.ReLoadAllPlugin()
+
 	// 初始化 Modules
 	bot.StartService()
 
