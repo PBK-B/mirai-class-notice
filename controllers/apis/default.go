@@ -1,14 +1,15 @@
 package controllers
 
 import (
-	"class_notice/models"
 	"strconv"
 
 	beego "github.com/beego/beego/v2/server/web"
+
+	"class_notice/models"
 )
 
 // 在需要登陆的接口加上这个助理函数，未登陆就会返回统一的错误
-func userAssistant(c *beego.Controller) (token string, user models.Users, is bool) {
+func userAssistant(c *beego.Controller) (token string, user *models.Users, is bool) {
 	token, user, is = isLogin(c)
 	if !is {
 		callBackResult(c, 200, "用户未登陆或 token 失效！", nil)
@@ -40,7 +41,7 @@ func callBackResult(c *beego.Controller, code int, msg string, data interface{})
 }
 
 // 判断是否登陆函数，该函数还可以获取登陆用户
-func isLogin(c *beego.Controller) (token string, user models.Users, isLogin bool) {
+func isLogin(c *beego.Controller) (token string, user *models.Users, isLogin bool) {
 	token, tokenErr := c.GetSecureCookie("bin", "u_token")
 	user, userErr := models.TokenGetUser(token)
 	// token 获取失败或失效，或用户被禁用将视为未登陆

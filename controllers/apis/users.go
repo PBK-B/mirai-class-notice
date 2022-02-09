@@ -242,7 +242,7 @@ func (c *UsersController) ApiUserList() {
 }
 
 // 做一个简单的判断用户是否属于超级管理员
-func isAdminUser(u models.Users) bool {
+func isAdminUser(u *models.Users) bool {
 	// TODO: 目前简单判断 ID 为 1 的用户为超级管理员
 	if u.Id == 1 {
 		return true

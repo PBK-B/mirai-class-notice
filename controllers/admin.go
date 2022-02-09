@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"class_notice/models"
-
 	beego "github.com/beego/beego/v2/server/web"
+
+	"class_notice/models"
 )
 
 type AdminController struct {
@@ -19,9 +19,9 @@ func (c *AdminController) Get() {
 		return
 	}
 
-	if !is {
+	if !is && c.Ctx.Request.RequestURI != "/login" {
 		// token 获取失败或失效，或用户被禁用将跳转登陆
-		c.Redirect("/login", 301)
+		c.Ctx.Redirect(301, "/login")
 		c.Finish()
 		return
 	}
@@ -32,7 +32,7 @@ func (c *AdminController) Get() {
 func (c *AdminController) LoginPage() {
 	token, _, is := isLogin(c)
 
-	if is {
+	if is && c.Ctx.Request.RequestURI != "/admin" {
 
 		flash := beego.NewFlash()
 		flash.Notice(token)
@@ -47,11 +47,11 @@ func (c *AdminController) LoginPage() {
 
 }
 
-func isLogin(c *AdminController) (token string, user models.Users, isLogin bool) {
+func isLogin(c *AdminController) (token string, user *models.Users, isLogin bool) {
 	token, tokenErr := c.GetSecureCookie("bin", "u_token")
 	user, userErr := models.TokenGetUser(token)
 	// token 获取失败或失效，或用户被禁用将视为未登陆
-	if !tokenErr || userErr != nil || user.Status != 1 {
+	if !tokenErr || userErr != nil || user == nil || user.Status != 1 {
 		return token, user, false
 	} else {
 		return token, user, true

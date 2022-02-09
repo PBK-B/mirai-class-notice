@@ -1,10 +1,11 @@
 package models
 
 import (
-	helper "class_notice/helper"
 	"fmt"
 
 	"github.com/beego/beego/v2/client/orm"
+
+	helper "class_notice/helper"
 )
 
 type Users struct {
@@ -79,10 +80,14 @@ func LoginUser(name string, password string) (user Users, err error) {
 }
 
 // Token 获取用户
-func TokenGetUser(token string) (user Users, err error) {
+func TokenGetUser(token string) (user *Users, err error) {
 	o := orm.NewOrm()
-	user = Users{Token: token}
-	err = o.Read(&user, "token")
+	user = &Users{Token: token}
+	err = o.Read(user, "token")
+	if err != nil {
+		return nil, err
+	}
+
 	return
 }
 
