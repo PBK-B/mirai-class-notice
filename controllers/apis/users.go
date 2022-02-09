@@ -26,7 +26,7 @@ func (c *UsersController) ApiLogin() {
 	// TODO: Bin BY 这里应该还可以做判断用户名和密码是否合法
 	user, err := models.LoginUser(u_name, u_password)
 
-	if err == orm.ErrNoRows {
+	if user.Id == 0 || err == orm.ErrNoRows {
 		callBackResult(&c.Controller, 200, "用户名或密码错误", nil)
 		return
 	} else if err == orm.ErrMissPK {
